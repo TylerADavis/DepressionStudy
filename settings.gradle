@@ -1,0 +1,2 @@
+include ':app', ':aware-core'
+project(':aware-core').projectDir = new File('modules/aware-core')

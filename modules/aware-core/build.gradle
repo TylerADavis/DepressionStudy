@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        versionCode 0
+        versionName '4.0.0'
+        targetSdkVersion 25
+        minSdkVersion 11 //Android 3.0
+    }
+
+    signingConfigs {
+        release
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+if (System.getenv("storeFile") != null && System.getenv("storePassword") != null && System.getenv("keyAlias") != null && System.getenv("keyPassword") != null) {
+    android.signingConfigs.release.storeFile = file(System.getenv("storeFile"))
+    android.signingConfigs.release.storePassword = System.getenv("storePassword")
+    android.signingConfigs.release.keyAlias = System.getenv("keyAlias")
+    android.signingConfigs.release.keyPassword = System.getenv("keyPassword")
+} else {
+    println("No keystore defined. Unsigned .apk!")
+    android.buildTypes.release.signingConfig = null
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+task generateJavadocs(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task generateJavadocsJar(type: Jar) {
+    from generateJavadocs.destinationDir
+    classifier 'javadoc'
+}
+
+generateJavadocsJar.dependsOn generateJavadocs
+
+artifacts {
+    archives generateJavadocsJar
+    archives generateSourcesJar
+}
+
+dependencies {
+    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$mqtt_libs"
+    implementation "com.koushikdutta.ion:ion:$ion_libs"
+    implementation "com.android.support:gridlayout-v7:$support_libs"
+    implementation "com.android.support:appcompat-v7:$support_libs"
+}
+
