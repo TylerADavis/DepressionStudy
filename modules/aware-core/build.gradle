@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion compile_sdk
+    buildToolsVersion build_tools
 
     defaultConfig {
-        versionCode 0
-        versionName '4.0.0'
-        targetSdkVersion 25
-        minSdkVersion 11 //Android 3.0
+        versionCode version_code
+        versionName version_readable
+        targetSdkVersion target_sdk
+        minSdkVersion minimum_sdk //Android 4.0+
     }
 
     signingConfigs {

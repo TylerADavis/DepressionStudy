@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.aware.Aware;
+import com.aware.Aware_Preferences;
 import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {;
-    private static final String STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1488/v8f1BuxKrMef";
+    private static final String STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
     private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -59,21 +60,29 @@ public class MainActivity extends AppCompatActivity {;
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        initializeAware();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        initializeAware();
     }
 
     private void initializeAware() {
         if (hasRequiredPermissions()) {
             System.out.println("Had required permissions");
-            Intent aware = new Intent(getApplicationContext(), Aware.class);
-            startService(aware);
+            //Intent aware = new Intent(getApplicationContext(), Aware.class);
+            //startService(aware);
+            //if (!Aware.isStudy(getApplicationContext())) {
+            //    Aware.joinStudy(getApplicationContext(), STUDY_URL);
+            //} else {
+            //    System.out.println("Already in a study");
+            //}
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
             Aware.joinStudy(getApplicationContext(), STUDY_URL);
+            Aware.startAWARE(getApplicationContext());
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
         } else {
             System.out.println("Didn't have required permissions");
             requestPermissions();

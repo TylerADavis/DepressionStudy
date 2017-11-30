@@ -3,26 +3,26 @@ package com.aware;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Binder;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.aware.providers.ESM_Provider;
 import com.aware.providers.ESM_Provider.ESM_Data;
 import com.aware.ui.ESM_Queue;
-import com.aware.ui.PermissionsHandler;
 import com.aware.ui.esms.ESMFactory;
 import com.aware.ui.esms.ESM_Question;
 import com.aware.utils.Aware_Sensor;
@@ -209,9 +209,7 @@ public class ESM extends Aware_Sensor {
     public void onCreate() {
         super.onCreate();
 
-        DATABASE_TABLES = ESM_Provider.DATABASE_TABLES;
-        TABLES_FIELDS = ESM_Provider.TABLES_FIELDS;
-        CONTEXT_URIS = new Uri[]{ESM_Data.CONTENT_URI};
+        AUTHORITY = ESM_Provider.getAuthority(this);
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -221,6 +219,15 @@ public class ESM extends Aware_Sensor {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, ESM_Provider.getAuthority(this))) {
+            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), false);
+            ContentResolver.removePeriodicSync(
+                    Aware.getAWAREAccount(this),
+                    ESM_Provider.getAuthority(this),
+                    Bundle.EMPTY
+            );
+        }
 
         if (Aware.DEBUG) Log.d(TAG, "ESM service terminated...");
     }
@@ -241,6 +248,17 @@ public class ESM extends Aware_Sensor {
 
             if (DEBUG)
                 Log.d(TAG, "ESM service active... Queue = " + ESM_Queue.getQueueSize(getApplicationContext()));
+
+            if (!Aware.isSyncEnabled(this, ESM_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+                ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), 1);
+                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), true);
+                ContentResolver.addPeriodicSync(
+                        Aware.getAWAREAccount(this),
+                        ESM_Provider.getAuthority(this),
+                        Bundle.EMPTY,
+                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
+                );
+            }
         }
 
         return START_STICKY;
@@ -396,6 +414,9 @@ public class ESM extends Aware_Sensor {
         mBuilder.setOnlyAlertOnce(notifyOnce);
         mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_ID);
+
         Intent intent_ESM = new Intent(context, ESM_Queue.class);
         intent_ESM.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -500,6 +521,9 @@ public class ESM extends Aware_Sensor {
                     //Check if there is a flow to follow
                     processFlow(context, intent.getStringExtra(EXTRA_ANSWER));
 
+                    //Check if there is a app integration
+                    processAppIntegration(context);
+
                     if (ESM_Queue.getQueueSize(context) > 0) {
                         Intent intent_ESM = new Intent(context, ESM_Queue.class);
                         intent_ESM.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -546,6 +570,31 @@ public class ESM extends Aware_Sensor {
                     context.sendBroadcast(esm_done);
                 }
             }
+        }
+    }
+
+    private static void processAppIntegration(Context context) {
+        try {
+            ESM_Question esm = null;
+            Cursor last_esm = context.getContentResolver().query(ESM_Data.CONTENT_URI, null, ESM_Data.STATUS + "=" + ESM.STATUS_ANSWERED, null, ESM_Data.TIMESTAMP + " DESC LIMIT 1");
+            if (last_esm != null && last_esm.moveToFirst()) {
+                JSONObject esm_question = new JSONObject(last_esm.getString(last_esm.getColumnIndex(ESM_Data.JSON)));
+                esm = new ESMFactory().getESM(esm_question.getInt(ESM_Question.esm_type), esm_question, last_esm.getInt(last_esm.getColumnIndex(ESM_Data._ID)));
+            }
+            if (last_esm != null && !last_esm.isClosed()) last_esm.close();
+
+            if (esm != null && esm.getAppIntegration().length() > 0) {
+                try {
+                    Intent integration = new Intent(Intent.ACTION_VIEW);
+                    integration.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    integration.setData(Uri.parse(esm.getAppIntegration()));
+                    context.startActivity(integration);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(context, "No application to handle: " + esm.getAppIntegration(), Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
