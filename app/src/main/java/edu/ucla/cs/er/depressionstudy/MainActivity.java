@@ -8,7 +8,9 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ui.PermissionsHandler;
@@ -71,20 +73,22 @@ public class MainActivity extends AppCompatActivity {;
 
     private void initializeAware() {
         if (hasRequiredPermissions()) {
-            System.out.println("Had required permissions");
-            //Intent aware = new Intent(getApplicationContext(), Aware.class);
-            //startService(aware);
-            //if (!Aware.isStudy(getApplicationContext())) {
-            //    Aware.joinStudy(getApplicationContext(), STUDY_URL);
-            //} else {
-            //    System.out.println("Already in a study");
-            //}
+            if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
+                Aware.joinStudy(getApplicationContext(), STUDY_URL);
+                Toast.makeText(getApplicationContext(), "Joining study", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Already in a study", Toast.LENGTH_SHORT).show();
+            }
+
+            Intent aware = new Intent(this, Aware.class);
+            startService(aware);
+
             Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
-            Aware.joinStudy(getApplicationContext(), STUDY_URL);
-            Aware.startAWARE(getApplicationContext());
-            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
+            Aware.startAWARE(this);
+
+            Applications.isAccessibilityServiceActive(this);
+            Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
         } else {
-            System.out.println("Didn't have required permissions");
             requestPermissions();
         }
     }
