@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
+import com.aware.syncadapters.Aware_Sync;
 import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
