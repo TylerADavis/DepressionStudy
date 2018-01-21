@@ -2,6 +2,7 @@ package edu.ucla.cs.er.depressionstudy;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,6 +13,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,38 +39,58 @@ public class MainActivity extends AppCompatActivity {;
     ));
 
     private TextView mTextMessage;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+    private String mActivityTitle;
+    private AboutFragment about;
+    private Bundle bundle;
+    private Window window;
 
     private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new NavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.container);
             switch (item.getItemId()) {
                 case R.id.navigation_questionnaires:
-                    mTextMessage.setText(R.string.title_questionnaires);
+                    mTextMessage.setVisibility(View.INVISIBLE);
                     mActivityTitle = getResources().getString(R.string.title_questionnaires);
-                    drawer.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorSurvey)));
+                    window.setStatusBarColor(getResources().getColor(R.color.colorSurvey));
                     return true;
                 case R.id.navigation_contactus:
-                    mTextMessage.setText(R.string.title_contactus);
+                    mTextMessage.setVisibility(View.INVISIBLE);
                     mActivityTitle = getResources().getString(R.string.title_contactus);
-                    drawer.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
+                    window.setStatusBarColor(getResources().getColor(R.color.colorContact));
                     return true;
                 case R.id.navigation_about:
-                    mTextMessage.setText(R.string.title_about);
+                    mTextMessage.setVisibility(View.INVISIBLE);
+                    // Check that the activity is using the layout version with
+                    // the fragment_container FrameLayout
+                    if (findViewById(R.id.fragment_container) != null) {
+                        // Create a new Fragment to be placed in the activity layout
+                        about = new AboutFragment();
+
+                        // In case this activity was started with special instructions from an
+                        // Intent, pass the Intent's extras to the fragment as arguments
+                        about.setArguments(getIntent().getExtras());
+
+                        // Add the fragment to the 'fragment_container' FrameLayout
+                        getSupportFragmentManager().beginTransaction()
+                                .add(R.id.fragment_container, about).commit();
+                    }
                     mActivityTitle = getResources().getString(R.string.title_about);
-                    drawer.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAbout)));
+                    window.setStatusBarColor(getResources().getColor(R.color.colorAbout));
                     return true;
             }
             return false;
         }
     };
-
-    private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private String mActivityTitle;
-    AboutFragment about;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity {;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        window = this.getWindow();
         mTextMessage = (TextView) findViewById(R.id.message);
         mActivityTitle = getTitle().toString();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
@@ -97,20 +120,12 @@ public class MainActivity extends AppCompatActivity {;
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
-//        mDrawerLayout.addDrawerListener(mDrawerToggle);
-//        mDrawerToggle.syncState();
-
-        setupDrawer();
-
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         initializeAware();
-    }
-
-    private void setupDrawer() {
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
     }
 
     @Override

@@ -16,6 +16,20 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="about">This application is used for data collection of
+        passive sensing of mental health study by
+        UCLA ER (eHealth Research) Lab and MITRE.
+        \n\nOur goals with this initial data collection effort
+        are two-fold:
+        \n\n
+        1. To build a proof-of-concept technology
+        platform capable of collecting, storing, and
+        analyzing measures.
+        \n
+        2. Determining which metrics best correlate
+        to which measures of mental health.</string>
+    <string name="contact">Please, get in touch with us to report any
+    issues or recommendations about the app.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
