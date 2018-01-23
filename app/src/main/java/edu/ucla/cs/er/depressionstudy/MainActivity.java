@@ -112,11 +112,12 @@ public class MainActivity extends AppCompatActivity {;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        window = this.getWindow();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAbout)));
+        window.setStatusBarColor(getResources().getColor(R.color.colorAbout));
 
-        FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
-        window = this.getWindow();
         mActivityTitle = getTitle().toString();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -140,7 +141,9 @@ public class MainActivity extends AppCompatActivity {;
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
         // Initial Fragment
+        FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
         if (findViewById(R.id.fragment_container) != null) {
             about = new AboutFragment();
             about.setArguments(getIntent().getExtras());
