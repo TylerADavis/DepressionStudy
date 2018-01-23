@@ -21,7 +21,7 @@
         android:gravity="center"
         android:keepScreenOn="true"
         android:text="eWellness"
-        android:textColor="#2d2c2c"
+        android:textColor="#fdfcfc"
         android:textSize="50sp"
         android:textStyle="normal" />
 
