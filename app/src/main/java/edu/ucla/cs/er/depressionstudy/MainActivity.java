@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,12 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
+import com.aware.ESM;
 import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
@@ -38,11 +39,12 @@ public class MainActivity extends AppCompatActivity {;
             android.Manifest.permission.READ_PHONE_STATE
     ));
 
-    private TextView mTextMessage;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private String mActivityTitle;
     private AboutFragment about;
+    private ContactFragment contact;
+    private SurveyFragment survey;
     private Bundle bundle;
     private Window window;
 
@@ -51,23 +53,35 @@ public class MainActivity extends AppCompatActivity {;
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_questionnaires:
-                    mTextMessage.setVisibility(View.INVISIBLE);
+                    if (findViewById(R.id.fragment_container) != null) {
+                        survey = new SurveyFragment();
+                        survey.setArguments(getIntent().getExtras());
+                        transaction.replace(R.id.fragment_container, survey);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
                     mActivityTitle = getResources().getString(R.string.title_questionnaires);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorSurvey)));
                     window.setStatusBarColor(getResources().getColor(R.color.colorSurvey));
                     return true;
                 case R.id.navigation_contactus:
-                    mTextMessage.setVisibility(View.INVISIBLE);
+                    if (findViewById(R.id.fragment_container) != null) {
+                        contact = new ContactFragment();
+                        contact.setArguments(getIntent().getExtras());
+                        transaction.replace(R.id.fragment_container, contact);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
                     mActivityTitle = getResources().getString(R.string.title_contactus);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
                     window.setStatusBarColor(getResources().getColor(R.color.colorContact));
                     return true;
                 case R.id.navigation_about:
-                    mTextMessage.setVisibility(View.INVISIBLE);
                     // Check that the activity is using the layout version with
                     // the fragment_container FrameLayout
                     if (findViewById(R.id.fragment_container) != null) {
@@ -79,8 +93,9 @@ public class MainActivity extends AppCompatActivity {;
                         about.setArguments(getIntent().getExtras());
 
                         // Add the fragment to the 'fragment_container' FrameLayout
-                        getSupportFragmentManager().beginTransaction()
-                                .add(R.id.fragment_container, about).commit();
+                        transaction.replace(R.id.fragment_container, about);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                     }
                     mActivityTitle = getResources().getString(R.string.title_about);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -100,19 +115,19 @@ public class MainActivity extends AppCompatActivity {;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
         window = this.getWindow();
-        mTextMessage = (TextView) findViewById(R.id.message);
         mActivityTitle = getTitle().toString();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Navigation");
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                getSupportActionBar().setTitle("Navigation");
+//                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+//            }
+//
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
@@ -124,6 +139,15 @@ public class MainActivity extends AppCompatActivity {;
         mDrawerToggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        // Initial Fragment
+        if (findViewById(R.id.fragment_container) != null) {
+            about = new AboutFragment();
+            about.setArguments(getIntent().getExtras());
+            transaction_init.replace(R.id.fragment_container, about);
+            transaction_init.addToBackStack(null);
+            transaction_init.commit();
+        }
 
         initializeAware();
     }
@@ -176,6 +200,19 @@ public class MainActivity extends AppCompatActivity {;
         } else {
             requestPermissions();
         }
+    }
+
+    private void requestESM() {
+        //Make sure ESMs are active within the framework
+        Aware.setSetting(getApplicationContext(), Aware_Preferences.STATUS_ESM, true);
+
+        //Define the ESM to be displayed
+        String esmString = "[{'esm':{'esm_type':"+ ESM.TYPE_ESM_TEXT+",'esm_title':'ESM Freetext','esm_instructions':'The user can answer an open ended question.','esm_submit':'Next','esm_expiration_threshold':60,'esm_trigger':'AWARE Tester'}}]";
+
+        //Queue the ESM to be displayed when possible
+        Intent esm = new Intent(ESM.ACTION_AWARE_QUEUE_ESM);
+        esm.putExtra(ESM.EXTRA_ESM, esmString);
+        sendBroadcast(esm);
     }
 
     private boolean hasRequiredPermissions() {
