@@ -21,9 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="start"
+            android:text="take assessment"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:background="@color/colorSurvey"/>
+            android:background="@color/colorPrimary"/>
 
     </LinearLayout>
 

@@ -62,32 +62,159 @@ public class SurveyFragment extends Fragment {
                             .addCheck("SATISFIED")
                             .setTrigger("AWARE Tester")
                             .setTitle("Daily Survey 1")
-                            .setExpirationThreshold(60)
+                            .setExpirationThreshold(300)
                             .setSubmitButton("NEXT")
                             .setInstructions("WHAT IS YOUR EMOTION TODAY?");
 
                     ESM_Radio esmRadio1 = new ESM_Radio();
-                    esmRadio1.addRadio("Insomnia")
-                            .addRadio("Restless")
-                            .addRadio("Neutral")
-                            .addRadio("Good")
-                            .addRadio("Very Good")
-                            .setTitle("Daily Survey 2")
-                            .setInstructions("HOW WAS YOUR SLEEP LAST NIGHT?")
+                    esmRadio1.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... tired out for no good reason?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio2 = new ESM_Radio();
+                    esmRadio2.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... nervous?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio3 = new ESM_Radio();
+                    esmRadio3.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... so nervous that nothing could calm you down?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio4 = new ESM_Radio();
+                    esmRadio4.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... hopeless?")
                             .setExpirationThreshold(60)
-                            .setSubmitButton("DONE");
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio5 = new ESM_Radio();
+                    esmRadio5.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... restless or fidgety?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio6 = new ESM_Radio();
+                    esmRadio6.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... so restless that you could not sit still?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio7 = new ESM_Radio();
+                    esmRadio7.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... depressed?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio8 = new ESM_Radio();
+                    esmRadio8.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... so depressed that nothing could cheer you up?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio9 = new ESM_Radio();
+                    esmRadio9.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... that everything was an effort?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio10 = new ESM_Radio();
+                    esmRadio10.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, about how often did you feel ...")
+                            .setInstructions("... worthless?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio11 = new ESM_Radio();
+                    esmRadio11.addRadio("A lot less often than usual")
+                            .addRadio("Some less often than usual")
+                            .addRadio("A little less often than usual")
+                            .addRadio("About the same as usual")
+                            .addRadio("A little more often than usual")
+                            .addRadio("Some more often than usual")
+                            .addRadio("A lot more often than usual")
+                            .setTitle("The last ten questions asked about feelings that might have occurred during the past day. Taking them altogether, did these feelings occur less often in the past day than is usual for you, about the same as usual, or more often than usual? (If you never have any of these feelings, select response option 4.)")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
+
+                    ESM_Radio esmRadio12 = new ESM_Radio();
+                    esmRadio12.addRadio("None of the time")
+                            .addRadio("A little of the time")
+                            .addRadio("Some of the time")
+                            .addRadio("Most of the time")
+                            .addRadio("All of the time")
+                            .setTitle("During the past day, how often have physical health problems been the main cause of these feelings?")
+                            .setExpirationThreshold(300)
+                            .setSubmitButton("NEXT");
 
                     JSONArray array = new JSONArray();
-                    array.put(esmCheckbox1.build());
                     array.put(esmRadio1.build());
+                    array.put(esmRadio2.build());
+                    array.put(esmRadio3.build());
+                    array.put(esmRadio4.build());
+                    array.put(esmRadio5.build());
+                    array.put(esmRadio6.build());
+                    array.put(esmRadio7.build());
+                    array.put(esmRadio8.build());
+                    array.put(esmRadio9.build());
+                    array.put(esmRadio10.build());
+                    array.put(esmRadio11.build());
+                    array.put(esmRadio12.build());
                     esmString = array.toString();
                     Log.d("esmString", esmString);
 
-//                    //add them to the factory
-//                    factory.addESM(esmCheckbox1);
-//                    factory.addESM(esmRadio1);
-//
-//                    //Queue them
+                    //Queue them
 //                    ESM.queueESM(getContext(), factory.build());
 
                     //Sample: Define the ESM to be displayed

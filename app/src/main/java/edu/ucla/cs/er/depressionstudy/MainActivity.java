@@ -113,10 +113,8 @@ public class MainActivity extends AppCompatActivity {;
         setContentView(R.layout.activity_main);
 
         window = this.getWindow();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAbout)));
-        window.setStatusBarColor(getResources().getColor(R.color.colorAbout));
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
 
         mActivityTitle = getTitle().toString();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
@@ -138,16 +136,16 @@ public class MainActivity extends AppCompatActivity {;
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
-        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+//        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
         // Initial Fragment
         FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
         if (findViewById(R.id.fragment_container) != null) {
-            about = new AboutFragment();
-            about.setArguments(getIntent().getExtras());
-            transaction_init.replace(R.id.fragment_container, about);
+            survey = new SurveyFragment();
+            survey.setArguments(getIntent().getExtras());
+            transaction_init.replace(R.id.fragment_container, survey);
             transaction_init.addToBackStack(null);
             transaction_init.commit();
         }
@@ -161,16 +159,16 @@ public class MainActivity extends AppCompatActivity {;
         mDrawerToggle.syncState();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
