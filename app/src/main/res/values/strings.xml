@@ -5,6 +5,7 @@
     <string name="title_questionnaires">Questionnaires</string>
     <string name="title_contactus">Contact Us</string>
     <string name="title_about">About</string>
+    <string name="title_exit">EXIT</string>
 
     <string name="title_activity_logo">LogoActivity</string>
     <string name="dummy_button">Dummy Button</string>

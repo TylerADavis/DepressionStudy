@@ -176,28 +176,6 @@ public class SurveyFragment extends Fragment {
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
 
-                    ESM_Radio esmRadio11 = new ESM_Radio();
-                    esmRadio11.addRadio("A lot less often than usual")
-                            .addRadio("Some less often than usual")
-                            .addRadio("A little less often than usual")
-                            .addRadio("About the same as usual")
-                            .addRadio("A little more often than usual")
-                            .addRadio("Some more often than usual")
-                            .addRadio("A lot more often than usual")
-                            .setTitle("The last ten questions asked about feelings that might have occurred during the past day. Taking them altogether, did these feelings occur less often in the past day than is usual for you, about the same as usual, or more often than usual? (If you never have any of these feelings, select response option 4.)")
-                            .setExpirationThreshold(300)
-                            .setSubmitButton("NEXT");
-
-                    ESM_Radio esmRadio12 = new ESM_Radio();
-                    esmRadio12.addRadio("None of the time")
-                            .addRadio("A little of the time")
-                            .addRadio("Some of the time")
-                            .addRadio("Most of the time")
-                            .addRadio("All of the time")
-                            .setTitle("During the past day, how often have physical health problems been the main cause of these feelings?")
-                            .setExpirationThreshold(300)
-                            .setSubmitButton("NEXT");
-
                     JSONArray array = new JSONArray();
                     array.put(esmRadio1.build());
                     array.put(esmRadio2.build());
@@ -209,8 +187,6 @@ public class SurveyFragment extends Fragment {
                     array.put(esmRadio8.build());
                     array.put(esmRadio9.build());
                     array.put(esmRadio10.build());
-                    array.put(esmRadio11.build());
-                    array.put(esmRadio12.build());
                     esmString = array.toString();
                     Log.d("esmString", esmString);
 
@@ -232,6 +208,12 @@ public class SurveyFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+
+    public void onBackPressed() {
+        onPause();
+        context.onBackPressed();
     }
 
 }

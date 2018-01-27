@@ -23,8 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class OnboardingActivity extends AppCompatActivity {
+import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
+public class OnboardingActivity extends AppCompatActivity {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -145,6 +146,7 @@ public class OnboardingActivity extends AppCompatActivity {
         mFinishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
                 Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
                 startActivity(logoIntent);
                 finish();

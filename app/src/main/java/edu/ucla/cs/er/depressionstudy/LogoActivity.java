@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -14,8 +15,12 @@ import com.aware.Aware_Preferences;
 import com.aware.ESM;
 import com.aware.ui.esms.ESMFactory;
 import com.aware.ui.esms.ESM_Radio;
+import com.aware.utils.Scheduler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+
+import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -25,6 +30,8 @@ public class LogoActivity extends AppCompatActivity {
     // Code from: https://www.youtube.com/watch?v=jXtof6OUtcE
     private static int SPLASH_TIME_OUT = 4000;
     private String esmString;
+    public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    boolean isUserFirstTime;
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -99,6 +106,13 @@ public class LogoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check the first time launching the app
+        isUserFirstTime = Boolean.valueOf(Utils.readSharedSetting(LogoActivity.this, PREF_USER_FIRST_TIME, "true"));
+        Log.d("LogoActivity","first time? " + isUserFirstTime);
+        Intent introIntent = new Intent(LogoActivity.this, OnboardingActivity.class);
+        introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
+
         setContentView(R.layout.activity_logo);
 
         mVisible = true;
@@ -114,16 +128,21 @@ public class LogoActivity extends AppCompatActivity {
 //            }
 //        });
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent logoIntent = new Intent(LogoActivity.this, MainActivity.class);
-                startActivity(logoIntent);
-                finish();
-            }
-        }, SPLASH_TIME_OUT);
+        if (isUserFirstTime) {
+            startActivity(introIntent);
+            finish();
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent logoIntent = new Intent(LogoActivity.this, MainActivity.class);
+                    startActivity(logoIntent);
+                    finish();
+                }
+            }, SPLASH_TIME_OUT);
+            weeklySurvey();
+        }
 
-        weeklySurvey();
     }
 
     private void weeklySurvey() {
@@ -395,20 +414,33 @@ public class LogoActivity extends AppCompatActivity {
                     .setExpirationThreshold(0)
                     .setSubmitButton("DONE");
 
-//            JSONArray array = new JSONArray();
-//            array.put(esmRadio1.build());
-//            array.put(esmRadio2.build());
-//            array.put(esmRadio3.build());
-//            array.put(esmRadio4.build());
-//            array.put(esmRadio5.build());
-//            array.put(esmRadio6.build());
-//            array.put(esmRadio7.build());
-//            array.put(esmRadio8.build());
-//            array.put(esmRadio9.build());
-//            array.put(esmRadio10.build());
-//            array.put(esmRadio11.build());
-//            esmString = array.toString();
-//            Log.d("esmString", esmString);
+            JSONArray array = new JSONArray();
+            array.put(esmRadio1.build());
+            array.put(esmRadio2.build());
+            array.put(esmRadio3.build());
+            array.put(esmRadio4.build());
+            array.put(esmRadio5.build());
+            array.put(esmRadio6.build());
+            array.put(esmRadio7.build());
+            array.put(esmRadio8.build());
+            array.put(esmRadio9.build());
+            array.put(esmRadio10.build());
+            array.put(esmRadio11.build());
+            array.put(esmRadio12.build());
+            array.put(esmRadio13.build());
+            array.put(esmRadio14.build());
+            array.put(esmRadio15.build());
+            array.put(esmRadio16.build());
+            array.put(esmRadio17.build());
+            array.put(esmRadio18.build());
+            array.put(esmRadio19.build());
+            array.put(esmRadio20.build());
+            array.put(esmRadio21.build());
+            array.put(esmRadio22.build());
+            array.put(esmRadio23.build());
+            array.put(esmRadio24.build());
+            esmString = array.toString();
+            Log.d("esmString", esmString);
 
             //add them to the factory
             factory.addESM(esmRadio1);
@@ -436,8 +468,17 @@ public class LogoActivity extends AppCompatActivity {
             factory.addESM(esmRadio23);
             factory.addESM(esmRadio24);
 
+            Scheduler.Schedule schedule = new Scheduler.Schedule("schedule_id");
+            schedule.addHour(9) //0-23
+                    .addWeekday("Saturday") //Every Saturday
+                    .setActionType(Scheduler.ACTION_TYPE_BROADCAST)
+                    .setActionIntentAction(ESM.ACTION_AWARE_QUEUE_ESM)
+                    .addActionExtra(ESM.EXTRA_ESM, esmString);
+
+            Scheduler.saveSchedule(getApplicationContext(), schedule);
+
             //Queue them
-            ESM.queueESM(this, factory.build());
+//            ESM.queueESM(this, factory.build());
 
             //Sample: Define the ESM to be displayed
 //                    String esmString = "[{'esm':{'esm_type':"+ ESM.TYPE_ESM_TEXT+",'esm_title':'ESM Freetext','esm_instructions':'The user can answer an open ended question.','esm_submit':'Next','esm_expiration_threshold':60,'esm_trigger':'AWARE Tester'}}]";
