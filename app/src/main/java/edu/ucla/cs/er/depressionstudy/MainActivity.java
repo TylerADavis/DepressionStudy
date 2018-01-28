@@ -219,12 +219,13 @@ public class MainActivity extends AppCompatActivity {;
 
     private void initializeAware() {
         if (hasRequiredPermissions()) {
-            if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
+            Aware.joinStudy(getApplicationContext(), STUDY_URL);
+            /*if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
                 Aware.joinStudy(getApplicationContext(), STUDY_URL);
                 Toast.makeText(getApplicationContext(), "Joining study", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Already in a study", Toast.LENGTH_SHORT).show();
-            }
+            }*/
 
             Intent aware = new Intent(this, Aware.class);
             startService(aware);

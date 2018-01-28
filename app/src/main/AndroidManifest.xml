@@ -49,6 +49,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -382,6 +384,42 @@
                 android:resource="@xml/sync_wifi" />
         </service>
 
+        <service
+            android:name="com.aware.plugin.ambient_noise.syncadapters.Ambient_Noise_Sync"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_ambient_noise" />
+        </service>
+
+        <service
+            android:name="com.aware.plugin.device_usage.syncadapters.Device_Usage_Sync"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_device_usage" />
+        </service>
+
+        <service
+            android:name="com.aware.plugin.google.activity_recognition.syncadapters.Google_AR_Sync"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_google_activity_recognition" />
+        </service>
+
+        <service
+            android:name="com.aware.plugin.google.fused_location.syncadapters.Google_Fused_Sync"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_google_fused_location" />
+        </service>
+
         <activity
             android:name=".LogoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -400,6 +438,42 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
+
+
+        <provider
+            android:name="com.aware.plugin.ambient_noise.Provider"
+            android:authorities="${applicationId}.provider.ambient_noise"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+
+        <provider
+            android:name="com.aware.plugin.device_usage.Provider"
+            android:authorities="${applicationId}.provider.device_usage"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+
+        <provider
+            android:name="com.aware.plugin.google.activity_recognition.Google_AR_Provider"
+            android:authorities="${applicationId}.provider.gar"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+
+        <provider
+            android:name="com.aware.plugin.google.fused_location.Provider"
+            android:authorities="${applicationId}.provider.geofences"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+
+        <!--<provider
+            android:name="com.aware.plugin.studentlife.audio_final.Provider"
+            android:authorities="${applicationId}.provider.audio_final"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />-->
     </application>
 
 </manifest>

@@ -9,6 +9,11 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/com.aware.plugin.ambient_noise.lib" />
+            <option value="$PROJECT_DIR$/com.aware.plugin.device_usage.lib" />
+            <option value="$PROJECT_DIR$/com.aware.plugin.google.activity_recognition.lib" />
+            <option value="$PROJECT_DIR$/com.aware.plugin.google.fused_location.lib" />
+            <option value="$PROJECT_DIR$/com.aware.plugin.studentlife.audio.lib" />
             <option value="$PROJECT_DIR$/modules/aware-core" />
           </set>
         </option>

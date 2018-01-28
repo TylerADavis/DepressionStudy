@@ -5,6 +5,11 @@
       <module fileurl="file://$PROJECT_DIR$/DepressionStudy.iml" filepath="$PROJECT_DIR$/DepressionStudy.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/modules/aware-core/aware-core.iml" filepath="$PROJECT_DIR$/modules/aware-core/aware-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.aware.plugin.ambient_noise.lib/com.aware.plugin.ambient_noise.lib.iml" filepath="$PROJECT_DIR$/com.aware.plugin.ambient_noise.lib/com.aware.plugin.ambient_noise.lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.aware.plugin.device_usage.lib/com.aware.plugin.device_usage.lib.iml" filepath="$PROJECT_DIR$/com.aware.plugin.device_usage.lib/com.aware.plugin.device_usage.lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.aware.plugin.google.activity_recognition.lib/com.aware.plugin.google.activity_recognition.lib.iml" filepath="$PROJECT_DIR$/com.aware.plugin.google.activity_recognition.lib/com.aware.plugin.google.activity_recognition.lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.aware.plugin.google.fused_location.lib/com.aware.plugin.google.fused_location.lib.iml" filepath="$PROJECT_DIR$/com.aware.plugin.google.fused_location.lib/com.aware.plugin.google.fused_location.lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.aware.plugin.studentlife.audio.lib/com.aware.plugin.studentlife.audio.lib.iml" filepath="$PROJECT_DIR$/com.aware.plugin.studentlife.audio.lib/com.aware.plugin.studentlife.audio.lib.iml" />
     </modules>
   </component>
 </project>

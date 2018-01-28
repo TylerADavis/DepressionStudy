@@ -1,2 +1,2 @@
-include ':app', ':aware-core'
+include ':app', ':aware-core', ':com.aware.plugin.ambient_noise.lib', ':com.aware.plugin.device_usage.lib', ':com.aware.plugin.google.activity_recognition.lib', ':com.aware.plugin.google.fused_location.lib', ':com.aware.plugin.studentlife.audio.lib'
 project(':aware-core').projectDir = new File('modules/aware-core')
