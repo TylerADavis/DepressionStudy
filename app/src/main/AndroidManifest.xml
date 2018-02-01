@@ -85,6 +85,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".NotificationReceiver" />
+
         <!-- AWARE sync adapter services -->
         <service
             android:name="com.aware.syncadapters.Accelerometer_Sync"

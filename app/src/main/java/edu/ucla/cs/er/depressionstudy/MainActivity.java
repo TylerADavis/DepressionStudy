@@ -1,5 +1,9 @@
 package edu.ucla.cs.er.depressionstudy;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +32,10 @@ import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+
+import static android.app.Notification.BADGE_ICON_LARGE;
+import static android.app.Notification.DEFAULT_ALL;
 
 public class MainActivity extends AppCompatActivity {;
     private static final String STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
@@ -49,6 +58,9 @@ public class MainActivity extends AppCompatActivity {;
     private SurveyFragment survey;
     private Bundle bundle;
     private Window window;
+
+    private AlarmManager alarmMgr;
+    private PendingIntent notificationIntent;
 
     private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new NavigationView.OnNavigationItemSelectedListener() {
@@ -114,6 +126,8 @@ public class MainActivity extends AppCompatActivity {;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.scheduleNotifications();
+
         window = this.getWindow();
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setHomeButtonEnabled(true);
@@ -153,6 +167,38 @@ public class MainActivity extends AppCompatActivity {;
         }
 
         initializeAware();
+    }
+
+    private void scheduleNotifications() {
+        System.out.println("Scheduling notifications..");
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setCategory(Notification.CATEGORY_ALARM);
+        builder.setContentTitle("eWellness Reminder");
+        builder.setContentText("Please fill your daily survey");
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        builder.setDefaults(DEFAULT_ALL);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+        builder.setTicker("Please fill your daily survey");
+        Notification notification = builder.build();
+
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        intent.putExtra(NotificationReceiver.NOTIFICATION_ID, 42);
+        intent.putExtra(NotificationReceiver.NOTIFICATION, notification);
+        notificationIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Set the alarm to start at 9:00 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
+
+        // Repeat daily
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, notificationIntent);
+
+        System.out.println("Scheduled notifications");
     }
 
     @Override
@@ -247,7 +293,7 @@ public class MainActivity extends AppCompatActivity {;
             Intent aware = new Intent(this, Aware.class);
             startService(aware);
 
-            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
             Aware.startAWARE(this);
 
             Applications.isAccessibilityServiceActive(this);
