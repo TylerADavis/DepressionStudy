@@ -470,10 +470,11 @@ public class LogoActivity extends AppCompatActivity {
 
             Scheduler.Schedule schedule = new Scheduler.Schedule("schedule_id");
             schedule.addHour(9) //0-23
+//                    .addMinute(16)
                     .addWeekday("Saturday") //Every Saturday
                     .setActionType(Scheduler.ACTION_TYPE_BROADCAST)
                     .setActionIntentAction(ESM.ACTION_AWARE_QUEUE_ESM)
-                    .addActionExtra(ESM.EXTRA_ESM, esmString);
+                    .addActionExtra(ESM.EXTRA_ESM, factory.build());
 
             Scheduler.saveSchedule(getApplicationContext(), schedule);
 

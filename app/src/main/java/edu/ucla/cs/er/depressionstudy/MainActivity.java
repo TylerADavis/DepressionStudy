@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.aware.Applications;
 import com.aware.Aware;
@@ -175,36 +174,54 @@ public class MainActivity extends AppCompatActivity {;
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (id) {
+            case R.id.terminate:
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Closing eWellness")
+                        .setMessage("Are you sure you want to close this app? It will stop the data collection.")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Aware.stopAWARE(getApplicationContext());
+                                finish();
+                            }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.terminate) {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Closing eWellness")
-                    .setMessage("Are you sure you want to close this app? It will stop the data collection.")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Aware.stopAWARE(getApplicationContext());
-                            finish();
-                        }
-
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-            return true;
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            case R.id.info:
+                if (findViewById(R.id.fragment_container) != null) {
+                    about = new AboutFragment();
+                    about.setArguments(getIntent().getExtras());
+                    transaction.replace(R.id.fragment_container, about);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
+            case R.id.survey:
+                if (findViewById(R.id.fragment_container) != null) {
+                    survey = new SurveyFragment();
+                    survey.setArguments(getIntent().getExtras());
+                    transaction.replace(R.id.fragment_container, survey);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        survey.onBackPressed();
-        onPause();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        survey.onBackPressed();
+//        onPause();
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

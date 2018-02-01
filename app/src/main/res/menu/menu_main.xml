@@ -6,4 +6,14 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/title_exit" />
+    <item
+        android:id="@+id/info"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/title_info" />
+    <item
+        android:id="@+id/survey"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/title_survey" />
 </menu>
