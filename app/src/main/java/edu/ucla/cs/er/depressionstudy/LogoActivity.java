@@ -476,7 +476,8 @@ public class LogoActivity extends AppCompatActivity {
                     .setActionIntentAction(ESM.ACTION_AWARE_QUEUE_ESM)
                     .addActionExtra(ESM.EXTRA_ESM, factory.build());
 
-            Scheduler.saveSchedule(getApplicationContext(), schedule);
+            // TODO: ENABLE THIS LINE WHEN WE WANT WEEKLY QUESTIONNAIRES
+            //Scheduler.saveSchedule(getApplicationContext(), schedule);
 
             //Queue them
 //            ESM.queueESM(this, factory.build());
