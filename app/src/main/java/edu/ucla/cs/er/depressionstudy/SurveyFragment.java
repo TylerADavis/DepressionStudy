@@ -75,6 +75,7 @@ public class SurveyFragment extends Fragment {
                             .setTitle("During the past day, about how often did you feel ...")
                             .setInstructions("... tired out for no good reason?")
                             .setExpirationThreshold(300)
+                            .setReplaceQueue(true)
                             .setSubmitButton("NEXT");
 
                     ESM_Radio esmRadio2 = new ESM_Radio();
