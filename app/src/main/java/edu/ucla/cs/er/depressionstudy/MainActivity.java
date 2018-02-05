@@ -1,5 +1,7 @@
 package edu.ucla.cs.er.depressionstudy;
 
+import android.*;
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -47,7 +49,11 @@ public class MainActivity extends AppCompatActivity {;
             android.Manifest.permission.BLUETOOTH_ADMIN,
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.READ_PHONE_STATE
+            android.Manifest.permission.READ_PHONE_STATE,
+            android.Manifest.permission.READ_CONTACTS,
+            android.Manifest.permission.READ_CALL_LOG,
+            android.Manifest.permission.READ_SMS,
+            android.Manifest.permission.RECORD_AUDIO
     ));
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -202,7 +208,7 @@ public class MainActivity extends AppCompatActivity {;
 
         // Repeat daily
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, notificationIntent);
-        
+
         System.out.println("Scheduled notifications");
     }
 
