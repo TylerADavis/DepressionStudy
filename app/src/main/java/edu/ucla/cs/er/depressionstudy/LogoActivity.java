@@ -28,7 +28,7 @@ import edu.ucla.cs.er.depressionstudy.Util.Utils;
  */
 public class LogoActivity extends AppCompatActivity {
     // Code from: https://www.youtube.com/watch?v=jXtof6OUtcE
-    private static int SPLASH_TIME_OUT = 4000;
+    private static int SPLASH_TIME_OUT = 2000;
     private String esmString;
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
     boolean isUserFirstTime;

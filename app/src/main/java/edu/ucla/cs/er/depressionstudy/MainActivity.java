@@ -172,8 +172,10 @@ public class MainActivity extends AppCompatActivity {;
     private void scheduleNotifications() {
         System.out.println("Scheduling notifications..");
 
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setCategory(Notification.CATEGORY_ALARM);
+        Context context = getApplicationContext();
+
+        Notification.Builder builder = new Notification.Builder(context);
+        builder.setCategory(Notification.CATEGORY_REMINDER);
         builder.setContentTitle("eWellness Reminder");
         builder.setContentText("Please fill your daily survey");
         builder.setSmallIcon(R.drawable.ic_launcher);
@@ -181,23 +183,26 @@ public class MainActivity extends AppCompatActivity {;
         builder.setDefaults(DEFAULT_ALL);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setTicker("Please fill your daily survey");
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
 
-        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, NotificationReceiver.class);
+        alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationReceiver.class);
         intent.putExtra(NotificationReceiver.NOTIFICATION_ID, 42);
         intent.putExtra(NotificationReceiver.NOTIFICATION, notification);
-        notificationIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Set the alarm to start at 9:00 a.m.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.MINUTE, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
 
         // Repeat daily
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, notificationIntent);
-
+        
         System.out.println("Scheduled notifications");
     }
 
