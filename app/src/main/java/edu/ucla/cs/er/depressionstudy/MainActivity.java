@@ -135,8 +135,6 @@ public class MainActivity extends AppCompatActivity {;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.scheduleNotifications();
-
         window = this.getWindow();
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setHomeButtonEnabled(true);
@@ -175,7 +173,7 @@ public class MainActivity extends AppCompatActivity {;
             transaction_init.commit();
         }
 
-        initializeAware();
+        //
 
         checkForUpdates();
     }
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity {;
         builder.setDefaults(DEFAULT_ALL);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setTicker("Please fill your daily survey");
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
 
@@ -296,6 +294,8 @@ public class MainActivity extends AppCompatActivity {;
         super.onResume();
 
         checkForCrashes();
+        initializeAware();
+        this.scheduleNotifications();
     }
 
     @Override
