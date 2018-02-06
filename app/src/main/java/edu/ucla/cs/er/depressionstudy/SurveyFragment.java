@@ -72,7 +72,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[1 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... tired out for no good reason?")
                             .setExpirationThreshold(300)
                             .setReplaceQueue(true)
@@ -84,7 +84,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[2 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... nervous?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -95,7 +95,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[3 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... so nervous that nothing could calm you down?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -106,7 +106,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[4 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... hopeless?")
                             .setExpirationThreshold(60)
                             .setSubmitButton("NEXT");
@@ -117,7 +117,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[5 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... restless or fidgety?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -128,7 +128,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[6 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... so restless that you could not sit still?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -139,7 +139,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[7 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... depressed?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -150,7 +150,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[8 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... so depressed that nothing could cheer you up?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -161,7 +161,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[9 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... that everything was an effort?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
@@ -172,7 +172,7 @@ public class SurveyFragment extends Fragment {
                             .addRadio("Some of the time")
                             .addRadio("Most of the time")
                             .addRadio("All of the time")
-                            .setTitle("During the past day, about how often did you feel ...")
+                            .setTitle("[10 of 10] During the past day, about how often did you feel ...")
                             .setInstructions("... worthless?")
                             .setExpirationThreshold(300)
                             .setSubmitButton("NEXT");
