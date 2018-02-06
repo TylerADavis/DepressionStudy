@@ -20,6 +20,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "1710ab02e39d4e30b99d9c218994940d"]
     }
     buildTypes {
         release {
@@ -42,6 +43,7 @@ android {
 allprojects {
     repositories {
         maven { url "https://jitpack.io" }
+        jcenter()
     }
 }
 
@@ -62,4 +64,5 @@ dependencies {
     //compile project(':com.aware.plugin.studentlife.audio.lib')
     implementation 'com.google.android.gms:play-services:9.8.0'
     implementation 'com.android.support:cardview-v7:27.0.1'
+    compile 'net.hockeyapp.android:HockeySDK:5.1.0'
 }

@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import static android.app.Notification.BADGE_ICON_LARGE;
 import static android.app.Notification.DEFAULT_ALL;
 
@@ -173,6 +176,8 @@ public class MainActivity extends AppCompatActivity {;
         }
 
         initializeAware();
+
+        checkForUpdates();
     }
 
     private void scheduleNotifications() {
@@ -289,6 +294,20 @@ public class MainActivity extends AppCompatActivity {;
     @Override
     protected void onResume() {
         super.onResume();
+
+        checkForCrashes();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterManagers();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterManagers();
     }
 
     private void initializeAware() {
@@ -343,5 +362,20 @@ public class MainActivity extends AppCompatActivity {;
         permissionsHandler.putExtra(PermissionsHandler.EXTRA_REDIRECT_ACTIVITY, getPackageName() + "/" + getClass().getName());
         permissionsHandler.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(permissionsHandler);
+    }
+
+    // HockeyApp integration
+
+    private void checkForCrashes() {
+        CrashManager.register(this);
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
     }
 }
