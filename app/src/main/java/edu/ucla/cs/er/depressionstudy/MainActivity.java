@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {;
         //
 
         checkForUpdates();
+        initializeAware();
     }
 
     private void scheduleNotifications() {
@@ -294,7 +295,6 @@ public class MainActivity extends AppCompatActivity {;
         super.onResume();
 
         checkForCrashes();
-        initializeAware();
         this.scheduleNotifications();
     }
 
