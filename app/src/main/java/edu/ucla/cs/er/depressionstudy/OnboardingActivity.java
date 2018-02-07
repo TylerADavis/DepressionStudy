@@ -146,9 +146,16 @@ public class OnboardingActivity extends AppCompatActivity {
         mFinishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
-                Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
-                startActivity(logoIntent);
+                // OnboardingActivity -> LogoActivity
+//                Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
+//                Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
+//                startActivity(logoIntent);
+
+                // OnboardingActivity -> MainActivity
+                Utils.saveSharedSetting(OnboardingActivity.this, MainActivity.PREF_USER_FIRST_TIME, "false");
+                Intent mainIntent = new Intent(OnboardingActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+
                 finish();
 
             }

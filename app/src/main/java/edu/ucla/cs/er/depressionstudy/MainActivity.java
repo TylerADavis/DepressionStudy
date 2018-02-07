@@ -1,7 +1,5 @@
 package edu.ucla.cs.er.depressionstudy;
 
-import android.*;
-import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -11,35 +9,36 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
-import com.aware.Applications;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ESM;
 import com.aware.ui.PermissionsHandler;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
+import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
-import static android.app.Notification.BADGE_ICON_LARGE;
 import static android.app.Notification.DEFAULT_ALL;
 
 public class MainActivity extends AppCompatActivity {;
@@ -65,8 +64,17 @@ public class MainActivity extends AppCompatActivity {;
     private AboutFragment about;
     private ContactFragment contact;
     private SurveyFragment survey;
+    private LogoFragment logo;
     private Bundle bundle;
     private Window window;
+
+    private static int SPLASH_TIME_OUT = 1000;
+    public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    boolean isUserFirstTime;
+    private Handler handler;
+    private Runnable runnable;
+    FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
+    FragmentTransaction transaction_sec = getSupportFragmentManager().beginTransaction();
 
     private AlarmManager alarmMgr;
     private PendingIntent notificationIntent;
@@ -135,6 +143,8 @@ public class MainActivity extends AppCompatActivity {;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkFirstTime();
+
         window = this.getWindow();
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setHomeButtonEnabled(true);
@@ -162,19 +172,7 @@ public class MainActivity extends AppCompatActivity {;
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
 //        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
-        // Initial Fragment
-        FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
-        if (findViewById(R.id.fragment_container) != null) {
-            survey = new SurveyFragment();
-            survey.setArguments(getIntent().getExtras());
-            transaction_init.replace(R.id.fragment_container, survey);
-            transaction_init.addToBackStack(null);
-            transaction_init.commit();
-        }
-
-        //
-
+        initialFragment();
         checkForUpdates();
         initializeAware();
     }
@@ -277,12 +275,13 @@ public class MainActivity extends AppCompatActivity {;
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
 //        super.onBackPressed();
 //        survey.onBackPressed();
 //        onPause();
-//    }
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -293,7 +292,7 @@ public class MainActivity extends AppCompatActivity {;
     @Override
     protected void onResume() {
         super.onResume();
-
+//        initialFragment();
         checkForCrashes();
         this.scheduleNotifications();
     }
@@ -306,8 +305,9 @@ public class MainActivity extends AppCompatActivity {;
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         unregisterManagers();
+        handler.removeCallbacks(runnable);
+        super.onDestroy();
     }
 
     private void initializeAware() {
@@ -379,5 +379,54 @@ public class MainActivity extends AppCompatActivity {;
 
     private void unregisterManagers() {
         UpdateManager.unregister();
+    }
+
+    public void checkFirstTime() {
+        // Check the first time launching the app
+        isUserFirstTime = Boolean.valueOf(Utils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
+        Log.d("LogoActivity","first time? " + isUserFirstTime);
+        Intent introIntent = new Intent(MainActivity.this, OnboardingActivity.class);
+        introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
+
+        if (isUserFirstTime) {
+            startActivity(introIntent);
+            finish();
+        }
+    }
+
+    public void initialFragment() {
+
+        // Hide Action bar
+//        getSupportActionBar().hide();
+
+        // LogoFragment first
+        if (findViewById(R.id.fragment_container) != null) {
+            logo = new LogoFragment();
+            logo.setArguments(getIntent().getExtras());
+            transaction_init.replace(R.id.fragment_container, logo);
+            transaction_init.addToBackStack(null);
+            transaction_init.commit();
+        }
+
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+//                transaction_init.remove(logo).commit();
+
+                // Initial Fragment
+//                getSupportActionBar().show();
+                if (findViewById(R.id.fragment_container) != null) {
+                    survey = new SurveyFragment();
+                    survey.setArguments(getIntent().getExtras());
+                    transaction_sec.replace(R.id.fragment_container, survey);
+                    transaction_sec.addToBackStack(null);
+                    transaction_sec.commit();
+                }
+            }
+        };
+
+        handler.postDelayed(runnable, SPLASH_TIME_OUT);
+
     }
 }
