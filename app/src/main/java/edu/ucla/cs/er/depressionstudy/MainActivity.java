@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {;
         initialFragment();
         checkForUpdates();
         initializeAware();
+        scheduleNotifications();
     }
 
     private void scheduleNotifications() {
@@ -194,6 +195,7 @@ public class MainActivity extends AppCompatActivity {;
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationReceiver.class);
@@ -294,7 +296,6 @@ public class MainActivity extends AppCompatActivity {;
         super.onResume();
 //        initialFragment();
         checkForCrashes();
-        this.scheduleNotifications();
     }
 
     @Override
@@ -312,7 +313,9 @@ public class MainActivity extends AppCompatActivity {;
 
     private void initializeAware() {
         if (hasRequiredPermissions()) {
-            Aware.joinStudy(getApplicationContext(), STUDY_URL);
+            if (!Aware.isStudy(this)) {
+                Aware.joinStudy(getApplicationContext(), STUDY_URL);
+            }
             /*if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
                 Aware.joinStudy(getApplicationContext(), STUDY_URL);
                 Toast.makeText(getApplicationContext(), "Joining study", Toast.LENGTH_SHORT).show();
