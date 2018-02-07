@@ -42,7 +42,7 @@ import edu.ucla.cs.er.depressionstudy.Util.Utils;
 import static android.app.Notification.DEFAULT_ALL;
 
 public class MainActivity extends AppCompatActivity {;
-    private static final String STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+    private static String STUDY_URL;
     private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -141,6 +141,13 @@ public class MainActivity extends AppCompatActivity {;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.FLAVOR.equals("dev")) {
+            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+        } else {
+            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+        }
+
         setContentView(R.layout.activity_main);
 
         checkFirstTime();
@@ -313,7 +320,7 @@ public class MainActivity extends AppCompatActivity {;
 
     private void initializeAware() {
         if (hasRequiredPermissions()) {
-            if (!Aware.isStudy(this)) {
+            if (!Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).equals(STUDY_URL)) {
                 Aware.joinStudy(getApplicationContext(), STUDY_URL);
             }
             /*if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
