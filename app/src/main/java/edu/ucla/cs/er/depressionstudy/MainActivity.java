@@ -320,14 +320,16 @@ public class MainActivity extends AppCompatActivity {;
                 Toast.makeText(getApplicationContext(), "Already in a study", Toast.LENGTH_SHORT).show();
             }*/
 
+
+
             Intent aware = new Intent(this, Aware.class);
             startService(aware);
 
             Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
             Aware.startAWARE(this);
 
-            Applications.isAccessibilityServiceActive(this);
-            Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
+            //Applications.isAccessibilityServiceActive(this);
+            //Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
         } else {
             requestPermissions();
         }
