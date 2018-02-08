@@ -14,13 +14,14 @@
         android:layout_alignParentTop="true"
         android:padding="16dp"
         android:textStyle="normal|bold"
-        android:textSize="18sp" />
+        android:textSize="22sp" /><!-- 18sp -->
 
     <TextView
         android:id="@+id/esm_instructions"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:textSize="18sp" /> <!-- No textsize -->
 
     <ScrollView
         android:id="@+id/radios_container"
