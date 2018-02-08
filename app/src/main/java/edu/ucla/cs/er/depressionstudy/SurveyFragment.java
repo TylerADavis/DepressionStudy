@@ -3,6 +3,7 @@ package edu.ucla.cs.er.depressionstudy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,15 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ESM;
+import com.aware.providers.ESM_Provider;
 import com.aware.ui.esms.ESM_Checkbox;
 import com.aware.ui.esms.ESM_Radio;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.util.Calendar;
 
 
 /**
@@ -34,6 +39,13 @@ public class SurveyFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateCompletedTextVisibility(this.getView());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -208,6 +220,8 @@ public class SurveyFragment extends Fragment {
             }
         });
 
+        updateCompletedTextVisibility(rootView);
+
         return rootView;
     }
 
@@ -215,6 +229,34 @@ public class SurveyFragment extends Fragment {
     public void onBackPressed() {
         onPause();
         context.onBackPressed();
+    }
+
+    private boolean hasFilledSurveyToday() {
+        Cursor survey_data = context.getContentResolver().query(ESM_Provider.ESM_Data.CONTENT_URI, null, null, null, "timestamp DESC");
+        survey_data.moveToFirst();
+        float latest_timestamp = survey_data.getFloat(survey_data.getColumnIndex("timestamp"));
+        if (!survey_data.isClosed()) survey_data.close();
+
+        Calendar cal_today = Calendar.getInstance();
+        cal_today.setTimeInMillis(System.currentTimeMillis());
+
+        Calendar cal_survey = Calendar.getInstance();
+        cal_survey.setTimeInMillis((long)latest_timestamp);
+
+        boolean isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
+                && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
+                && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
+
+        return isEqual;
+    }
+
+    private void updateCompletedTextVisibility(View rootView) {
+        TextView alreadyCompletedText = rootView.findViewById(R.id.text_completed);
+        if (hasFilledSurveyToday()) {
+            alreadyCompletedText.setVisibility(View.VISIBLE);
+        } else {
+            alreadyCompletedText.setVisibility(View.GONE);
+        }
     }
 
 }

@@ -34,6 +34,7 @@
     <string name="contact">Please, get in touch with us to report any
     issues or recommendations about the app.</string>
     <string name="survey">Instruction: When you want to complete the daily survey, press the button to view the questionnaire. </string>
+    <string name="survey_done">You have already taken the daily survey today. You can change your answers by taking the survey again.</string>
     <string name="welcome">Welcome to eWellness app. This app will monitor your smartphone activity</string>
     <string name="consent_title">UNIVERSITY OF CALIFORNIA \nLOS ANGELES \nSTUDY INFORMATION SHEET</string>
     <string name="consent"> <b>Passive Sensing of Mental Wellness</b>
