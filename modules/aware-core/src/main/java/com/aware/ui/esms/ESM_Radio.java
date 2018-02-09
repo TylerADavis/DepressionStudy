@@ -88,6 +88,7 @@ public class ESM_Radio extends ESM_Question {
 
             TextView esm_instructions = (TextView) ui.findViewById(R.id.esm_instructions);
             esm_instructions.setText(getInstructions());
+            esm_instructions.setTextSize(20);
 
             final RadioGroup radioOptions = (RadioGroup) ui.findViewById(R.id.esm_radio);
             radioOptions.setOnClickListener(new View.OnClickListener() {

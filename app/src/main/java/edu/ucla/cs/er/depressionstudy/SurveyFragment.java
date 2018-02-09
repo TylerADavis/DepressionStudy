@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aware.Aware;
@@ -252,10 +253,13 @@ public class SurveyFragment extends Fragment {
 
     private void updateCompletedTextVisibility(View rootView) {
         TextView alreadyCompletedText = rootView.findViewById(R.id.text_completed);
+        ImageView alreadyCompletedImg = rootView.findViewById(R.id.img_completed);
         if (hasFilledSurveyToday()) {
             alreadyCompletedText.setVisibility(View.VISIBLE);
+            alreadyCompletedImg.setVisibility(View.VISIBLE);
         } else {
             alreadyCompletedText.setVisibility(View.GONE);
+            alreadyCompletedImg.setVisibility(View.GONE);
         }
     }
 
