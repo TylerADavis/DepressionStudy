@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
@@ -233,21 +234,31 @@ public class SurveyFragment extends Fragment {
     }
 
     private boolean hasFilledSurveyToday() {
+        Aware.setSetting(context, Aware_Preferences.STATUS_ESM, true);
         Cursor survey_data = context.getContentResolver().query(ESM_Provider.ESM_Data.CONTENT_URI, null, null, null, "timestamp DESC");
-        survey_data.moveToFirst();
-        float latest_timestamp = survey_data.getFloat(survey_data.getColumnIndex("timestamp"));
-        if (!survey_data.isClosed()) survey_data.close();
+        boolean isEqual = false;
 
-        Calendar cal_today = Calendar.getInstance();
-        cal_today.setTimeInMillis(System.currentTimeMillis());
+        if (survey_data.getCount() > 0) {
+            survey_data.moveToFirst();
+            float latest_timestamp = survey_data.getFloat(survey_data.getColumnIndex("timestamp"));
+            if (!survey_data.isClosed()) survey_data.close();
 
-        Calendar cal_survey = Calendar.getInstance();
-        cal_survey.setTimeInMillis((long)latest_timestamp);
+            Calendar cal_today = Calendar.getInstance();
+            cal_today.setTimeInMillis(System.currentTimeMillis());
 
-        boolean isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
-                && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
-                && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
+            Calendar cal_survey = Calendar.getInstance();
+            cal_survey.setTimeInMillis((long)latest_timestamp);
 
+             isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
+                    && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
+                    && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
+
+
+        } else {
+            Toast.makeText(context,"Survey data is not obtained yet.", Toast.LENGTH_LONG).show();
+        }
+
+        survey_data.close();
         return isEqual;
     }
 

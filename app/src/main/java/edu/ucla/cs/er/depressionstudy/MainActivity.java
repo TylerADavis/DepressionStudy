@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,20 +24,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ESM;
-import com.aware.providers.Accelerometer_Provider;
-import com.aware.providers.ESM_Provider;
 import com.aware.ui.PermissionsHandler;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -185,7 +179,15 @@ public class MainActivity extends AppCompatActivity {;
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
 //        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        initialFragment();
+        if (findViewById(R.id.fragment_container) != null) {
+            survey = new SurveyFragment();
+            survey.setArguments(getIntent().getExtras());
+            transaction_sec.replace(R.id.fragment_container, survey);
+            transaction_sec.addToBackStack(null);
+            transaction_sec.commit();
+        }
+
+//        initialFragment();
         checkForUpdates();
         initializeAware();
         scheduleNotifications();
@@ -320,7 +322,7 @@ public class MainActivity extends AppCompatActivity {;
     @Override
     public void onDestroy() {
         unregisterManagers();
-        handler.removeCallbacks(runnable);
+//        handler.removeCallbacks(runnable);
         super.onDestroy();
     }
 
