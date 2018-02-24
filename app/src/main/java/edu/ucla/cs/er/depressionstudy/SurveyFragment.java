@@ -241,24 +241,29 @@ public class SurveyFragment extends Fragment {
         if (survey_data.getCount() > 0) {
             survey_data.moveToFirst();
             float latest_timestamp = survey_data.getFloat(survey_data.getColumnIndex("timestamp"));
+            String device_ID = survey_data.getString(survey_data.getColumnIndex("device_id"));
             if (!survey_data.isClosed()) survey_data.close();
 
             Calendar cal_today = Calendar.getInstance();
             cal_today.setTimeInMillis(System.currentTimeMillis());
+            if (device_ID.equals(Aware_Preferences.DEVICE_ID)) {
+                Calendar cal_survey = Calendar.getInstance();
+                cal_survey.setTimeInMillis((long)latest_timestamp);
 
-            Calendar cal_survey = Calendar.getInstance();
-            cal_survey.setTimeInMillis((long)latest_timestamp);
+                isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
+                        && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
+                        && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
+            } else {
+                isEqual = false;
+            }
 
-             isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
-                    && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
-                    && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
 
 
         } else {
             Toast.makeText(context,"Survey data is not obtained yet.", Toast.LENGTH_LONG).show();
         }
 
-        survey_data.close();
+//        survey_data.close();
         return isEqual;
     }
 
