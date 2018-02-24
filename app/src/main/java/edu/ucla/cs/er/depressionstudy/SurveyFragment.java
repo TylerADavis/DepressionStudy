@@ -246,16 +246,16 @@ public class SurveyFragment extends Fragment {
 
             Calendar cal_today = Calendar.getInstance();
             cal_today.setTimeInMillis(System.currentTimeMillis());
-            if (device_ID.equals(Aware_Preferences.DEVICE_ID)) {
+//            if (device_ID.equals(Aware_Preferences.DEVICE_ID)) {
                 Calendar cal_survey = Calendar.getInstance();
                 cal_survey.setTimeInMillis((long)latest_timestamp);
 
                 isEqual = (cal_today.get(Calendar.YEAR) == cal_survey.get(Calendar.YEAR))
                         && (cal_today.get(Calendar.MONTH) == cal_survey.get(Calendar.MONTH))
                         && (cal_today.get(Calendar.DAY_OF_MONTH) == cal_survey.get(Calendar.DAY_OF_MONTH));
-            } else {
-                isEqual = false;
-            }
+//            } else {
+//                isEqual = false;
+//            }
 
 
 
