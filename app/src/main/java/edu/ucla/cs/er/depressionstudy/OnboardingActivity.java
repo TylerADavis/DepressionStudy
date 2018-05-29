@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
@@ -44,7 +43,7 @@ public class OnboardingActivity extends AppCompatActivity {
     private Button mFinishBtn, mSkipBtn;
     private Window window;
 
-    ImageView zero, one, two;
+    ImageView zero, one, two, three;
     ImageView[] indicators;
     int page = 0;   //  to track page position
 
@@ -69,9 +68,11 @@ public class OnboardingActivity extends AppCompatActivity {
 
         zero = (ImageView) findViewById(R.id.intro_indicator_0);
         one = (ImageView) findViewById(R.id.intro_indicator_1);
+        two = (ImageView) findViewById(R.id.intro_indicator_2);
+        three = (ImageView) findViewById(R.id.intro_indicator_3);
 
         mCoordinator = (CoordinatorLayout) findViewById(R.id.main_content);
-        indicators = new ImageView[]{zero, one};
+        indicators = new ImageView[]{zero, one, two, three};
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -86,8 +87,11 @@ public class OnboardingActivity extends AppCompatActivity {
 
         final int color1 = getResources().getColor(R.color.colorSurvey);
         final int color2 = getResources().getColor(R.color.colorContact);
+        final int color4 = getResources().getColor(R.color.colorAbout);
+        final int color3 = getResources().getColor(R.color.colorOnboarding);
 
-        final int[] colorList = new int[]{color1, color2};
+
+        final int[] colorList = new int[]{color1, color2, color3, color4};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
@@ -96,7 +100,7 @@ public class OnboardingActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // color update
-                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 1 ? position : position + 1]);
+                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 3 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
             }
 
@@ -115,10 +119,17 @@ public class OnboardingActivity extends AppCompatActivity {
                         mViewPager.setBackgroundColor(color2);
                         window.setStatusBarColor(color2);
                         break;
+                    case 2:
+                        mViewPager.setBackgroundColor(color3);
+                        window.setStatusBarColor(color3);
+                        break;
+                    case 3:
+                        mViewPager.setBackgroundColor(color4);
+                        window.setStatusBarColor(color4);
                 }
 
-                mNextBtn.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
-                mFinishBtn.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                mNextBtn.setVisibility(position == 3 ? View.GONE : View.VISIBLE);
+                mFinishBtn.setVisibility(position == 3 ? View.VISIBLE : View.GONE);
             }
 
             @Override
@@ -222,27 +233,41 @@ public class OnboardingActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_onboarding, container, false);
-            TextView titleView = (TextView) rootView.findViewById(R.id.section_title);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.consent);
+
+            LinearLayout linearLayout1 = (LinearLayout) rootView.findViewById(R.id.consent);
             RelativeLayout relativeLayout = (RelativeLayout) rootView.findViewById(R.id.welcome);
-//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            LinearLayout linearLayout2 = (LinearLayout) rootView.findViewById(R.id.mentalhealth_notice);
+            LinearLayout linearLayout3 = (LinearLayout) rootView.findViewById(R.id.data_collection);
 
             int section = getArguments().getInt(ARG_SECTION_NUMBER);
             switch (section) {
                 case 1:
-                    linearLayout.setVisibility(View.GONE);
+                    linearLayout1.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.VISIBLE);
-//                    titleView.setText(getString(R.string.app_name));
-//                    textView.setText(getString(R.string.about));
-//                    Log.d(TAG, "sec = " + section);
+                    linearLayout2.setVisibility(View.GONE);
+                    linearLayout3.setVisibility(View.GONE);
+
                     return rootView;
                 case 2:
-                    linearLayout.setVisibility(View.VISIBLE);
+                    linearLayout1.setVisibility(View.VISIBLE);
                     relativeLayout.setVisibility(View.GONE);
-                    titleView.setText(R.string.consent_title);
-                    textView.setText(R.string.consent);
-//                    Log.d(TAG, "sec = " + section);
+                    linearLayout2.setVisibility(View.GONE);
+                    linearLayout3.setVisibility(View.GONE);
+
+                    return rootView;
+                case 3:
+                    linearLayout1.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);
+                    linearLayout2.setVisibility(View.VISIBLE);
+                    linearLayout3.setVisibility(View.GONE);
+
+                    return rootView;
+                case 4:
+                    linearLayout1.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);
+                    linearLayout2.setVisibility(View.GONE);
+                    linearLayout3.setVisibility(View.VISIBLE);
+
                     return rootView;
             }
             return rootView;
@@ -269,7 +294,7 @@ public class OnboardingActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 2;
+            return 4;
         }
 
     }
