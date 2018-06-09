@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,8 +44,11 @@ public class OnboardingActivity extends AppCompatActivity {
     private ImageButton mNextBtn;
     private Button mFinishBtn, mSkipBtn;
     private Window window;
+    private RelativeLayout relativeLayout2;
+    private EditText subIDTxt;
+    int subID = 0;
 
-    ImageView zero, one, two, three;
+    ImageView zero, one, two, three, four;
     ImageView[] indicators;
     int page = 0;   //  to track page position
 
@@ -70,9 +75,15 @@ public class OnboardingActivity extends AppCompatActivity {
         one = (ImageView) findViewById(R.id.intro_indicator_1);
         two = (ImageView) findViewById(R.id.intro_indicator_2);
         three = (ImageView) findViewById(R.id.intro_indicator_3);
+        four = (ImageView) findViewById(R.id.intro_indicator_4);
 
         mCoordinator = (CoordinatorLayout) findViewById(R.id.main_content);
-        indicators = new ImageView[]{zero, one, two, three};
+        indicators = new ImageView[]{zero, one, two, three, four};
+
+        relativeLayout2 = (RelativeLayout) findViewById(R.id.register_subID);
+        subIDTxt = (EditText) findViewById(R.id.subjectID);
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(subIDTxt, InputMethodManager.SHOW_IMPLICIT);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -87,11 +98,11 @@ public class OnboardingActivity extends AppCompatActivity {
 
         final int color1 = getResources().getColor(R.color.colorSurvey);
         final int color2 = getResources().getColor(R.color.colorContact);
-        final int color4 = getResources().getColor(R.color.colorAbout);
-        final int color3 = getResources().getColor(R.color.colorOnboarding);
+        final int color3 = getResources().getColor(R.color.colorAbout);
+        final int color4 = getResources().getColor(R.color.colorActivity);
+        final int color5 = getResources().getColor(R.color.colorOnboarding);
 
-
-        final int[] colorList = new int[]{color1, color2, color3, color4};
+        final int[] colorList = new int[]{color1, color2, color3, color4, color5};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
@@ -100,7 +111,7 @@ public class OnboardingActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // color update
-                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 3 ? position : position + 1]);
+                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 4 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
             }
 
@@ -114,22 +125,33 @@ public class OnboardingActivity extends AppCompatActivity {
                     case 0:
                         mViewPager.setBackgroundColor(color1);
                         window.setStatusBarColor(color1);
+                        relativeLayout2.setVisibility(View.GONE);
                         break;
                     case 1:
                         mViewPager.setBackgroundColor(color2);
                         window.setStatusBarColor(color2);
+                        relativeLayout2.setVisibility(View.GONE);
                         break;
                     case 2:
                         mViewPager.setBackgroundColor(color3);
                         window.setStatusBarColor(color3);
+                        relativeLayout2.setVisibility(View.GONE);
                         break;
                     case 3:
                         mViewPager.setBackgroundColor(color4);
                         window.setStatusBarColor(color4);
+                        relativeLayout2.setVisibility(View.GONE);
+                        break;
+                    case 4:
+                        mViewPager.setBackgroundColor(color5);
+                        window.setStatusBarColor(color5);
+                        relativeLayout2.setVisibility(View.VISIBLE);
+
+                        break;
                 }
 
-                mNextBtn.setVisibility(position == 3 ? View.GONE : View.VISIBLE);
-                mFinishBtn.setVisibility(position == 3 ? View.VISIBLE : View.GONE);
+                mNextBtn.setVisibility(position == 4 ? View.GONE : View.VISIBLE);
+                mFinishBtn.setVisibility(position == 4 ? View.VISIBLE : View.GONE);
             }
 
             @Override
@@ -154,20 +176,31 @@ public class OnboardingActivity extends AppCompatActivity {
             }
         });
 
+//        if (!subIDTxt.getText().toString().isEmpty()) {
+//            mFinishBtn.setEnabled(true);
+//        } else {
+//            mFinishBtn.setEnabled(false);
+//        }
+
         mFinishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // OnboardingActivity -> LogoActivity
-                Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
-                Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
-                startActivity(logoIntent);
+                if (!subIDTxt.getText().toString().isEmpty()) {
+                    subID = Integer.valueOf(subIDTxt.getText().toString());
+                    Log.d(TAG, "SubID = " + subID);
+
+                    // OnboardingActivity -> LogoActivity
+                    Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
+                    Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
+                    logoIntent.putExtra("subject_id", subID);
+                    startActivity(logoIntent);
+                    finish();
+                }
 
                 // OnboardingActivity -> MainActivity
 //                Utils.saveSharedSetting(OnboardingActivity.this, MainActivity.PREF_USER_FIRST_TIME, "false");
 //                Intent mainIntent = new Intent(OnboardingActivity.this, MainActivity.class);
 //                startActivity(mainIntent);
-
-                finish();
 
             }
         });
@@ -269,6 +302,13 @@ public class OnboardingActivity extends AppCompatActivity {
                     linearLayout3.setVisibility(View.VISIBLE);
 
                     return rootView;
+                case 5:
+                    linearLayout1.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);
+                    linearLayout2.setVisibility(View.GONE);
+                    linearLayout3.setVisibility(View.GONE);
+
+                    return rootView;
             }
             return rootView;
         }
@@ -293,8 +333,8 @@ public class OnboardingActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 4;
+            // Show 5 total pages.
+            return 5;
         }
 
     }

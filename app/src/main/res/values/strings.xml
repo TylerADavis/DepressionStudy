@@ -5,9 +5,10 @@
     <string name="title_questionnaires">Questionnaires</string>
     <string name="title_contactus">Contact Us</string>
     <string name="title_about">About</string>
-    <string name="title_exit">EXIT</string>
-    <string name="title_info">INFO</string>
-    <string name="title_survey">SURVEY</string>
+    <string name="title_exit">Exit</string>
+    <string name="title_info">Information</string>
+    <string name="title_survey">Assessment</string>
+    <string name="title_help">Need Help?</string>
 
     <string name="title_activity_logo">LogoActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -104,19 +105,37 @@
         \n\nOur application will also <b>NOT</b> conduct any activities other than collect sensor data and your survey responses.
         </string>
     <string name="collect_p2">So here is precisely what sensors we will be collecting and how it will be used:
-        \n\n●Application use: We’ll monitor the frequency and duration of use of specific phone apps.
-        \n\n●Communication: We’ll monitor a log of incoming and outgoing phone calls and text messages, including the number of texts and phone calls and unique individuals contacted. We won’t be storing specific contact info, just the quantity and diversity of social interactions. This does <b>NOT</b> assess or record the content of communications.
-        \n\n●Location: location using GPS, network and wifi detection.
-        \n\n●Ambient sound detection: We will detect when your external environment is louder than 50 decibels using the phone’s microphone. We will only record decibel levels and NOT record any audio
-        \n\n●Activity and movements: we will use the accelerometer, gyroscope, and GPS tracking to try and determine activity-types
-        \n\n●Light: We will use the camera’s light sensor to detect light level associated with being outside or in a dark location. Video will <b>NOT</b> be collected
-        \n\n●Phone use: We will monitor phone screen on-time
+        \n\n● Application use: We’ll monitor the frequency and duration of use of specific phone apps.
+        \n\n● Communication: We’ll monitor a log of incoming and outgoing phone calls and text messages, including the number of texts and phone calls and unique individuals contacted. We won’t be storing specific contact info, just the quantity and diversity of social interactions. This does <b>NOT</b> assess or record the content of communications.
+        \n\n● Location: location using GPS, network and wifi detection.
+        \n\n● Ambient sound detection: We will detect when your external environment is louder than 50 decibels using the phone’s microphone. We will only record decibel levels and NOT record any audio
+        \n\n● Activity and movements: we will use the accelerometer, gyroscope, and GPS tracking to try and determine activity-types
+        \n\n● Light: We will use the camera’s light sensor to detect light level associated with being outside or in a dark location. Video will <b>NOT</b> be collected
+        \n\n● Phone use: We will monitor phone screen on-time
         \n\nIf you have any concerns about the data being collected please let us know. You will have to allow all permissions in order for the application to work properly.
-</string>
+        </string>
 
+    <string name="help_content1">IF YOU ARE EXPERIENCING A LIFE THREATENING EMERGENCY,
+        CALL 9-1-1 OR GO TO YOUR NEAREST HOSPITAL EMERGENCY ROOM.</string>
+    <string name="help_content2">For emergency assistance:
+        \n\nUC Police Department (UCPD)
+        Call 9-1-1 or (310) 825-1491
+        Ronald Reagan UCLA Medical Center
+        Map to Medical Center
+        (310) 825-9111 Main line
+        (310) 825-2111 Emergency Department</string>
+    <string name="help_content3">If you are having thoughts about suicide:
+        \n\nCAPS (24 hours): (310) 825-0768
+        National Suicide Prevention Hotline (24 hours): (800) 273-TALK (8255) or chat online
+        Crisis Text Line (24 hours): Text 741-741 from anywhere in the USA, anytime, about any type of crisis.
+        </string>
+    <string name="help_content4">If you are a UCLA student experiencing a mental health crisis:
+        \n\nCall (310) 825-0768 or visit CAPS during Brief Screen hours: Monday-Friday 9am-4pm
+        </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_onboarding">OnboardingActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    
 </resources>

@@ -2,22 +2,12 @@ package edu.ucla.cs.er.depressionstudy;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
-import com.aware.Aware;
-import com.aware.Aware_Preferences;
-import com.aware.ESM;
-import com.aware.ui.esms.ESM_Freetext;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 
 /**
@@ -41,43 +31,43 @@ public class ContactFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
         context = getActivity();
 
-        createButton =  (Button) rootView.findViewById(R.id.bt_create);
-//        setState(STATE_DEFAULT);
-        createButton.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                try {
-//                    ESMFactory factory = new ESMFactory();
-                    Aware.setSetting(context, Aware_Preferences.STATUS_ESM, true);
-
-                    //define ESM question
-                    ESM_Freetext esmFreetext = new ESM_Freetext();
-                    esmFreetext.setTitle("Contact Us")
-                            .setTrigger("AWARE Tester")
-                            .setExpirationThreshold(60)
-                            .setSubmitButton("SEND")
-                            .setInstructions("We appreciate your comments.");
-
-                    JSONArray array = new JSONArray();
-                    array.put(esmFreetext.build());
-                    esmString = array.toString();
-                    Log.d("esmString", esmString);
-
-//                    //add them to the factory
-//                    factory.addESM(esmFreetext);
+//        createButton =  (Button) rootView.findViewById(R.id.bt_create);
+////        setState(STATE_DEFAULT);
+//        createButton.setOnClickListener(new Button.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                try {
+////                    ESMFactory factory = new ESMFactory();
+//                    Aware.setSetting(context, Aware_Preferences.STATUS_ESM, true);
 //
-//                    //Queue them
-//                    ESM.queueESM(getContext(), factory.build());
-
-                    Intent esm = new Intent(ESM.ACTION_AWARE_QUEUE_ESM);
-                    esm.putExtra(ESM.EXTRA_ESM, esmString);
-                    context.sendBroadcast(esm);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//                    //define ESM question
+//                    ESM_Freetext esmFreetext = new ESM_Freetext();
+//                    esmFreetext.setTitle("Contact Us")
+//                            .setTrigger("AWARE Tester")
+//                            .setExpirationThreshold(60)
+//                            .setSubmitButton("SEND")
+//                            .setInstructions("We appreciate your comments.");
+//
+//                    JSONArray array = new JSONArray();
+//                    array.put(esmFreetext.build());
+//                    esmString = array.toString();
+//                    Log.d("esmString", esmString);
+//
+////                    //add them to the factory
+////                    factory.addESM(esmFreetext);
+////
+////                    //Queue them
+////                    ESM.queueESM(getContext(), factory.build());
+//
+//                    Intent esm = new Intent(ESM.ACTION_AWARE_QUEUE_ESM);
+//                    esm.putExtra(ESM.EXTRA_ESM, esmString);
+//                    context.sendBroadcast(esm);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         return rootView;
     }

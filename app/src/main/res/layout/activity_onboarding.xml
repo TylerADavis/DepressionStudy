@@ -15,6 +15,42 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingBottom="?android:attr/actionBarSize" />
 
+    <RelativeLayout
+        android:id="@+id/register_subID"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/subID_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register Subject ID"
+            android:textSize="30sp"
+            android:layout_centerInParent="true"
+            android:textAlignment="center" />
+
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/subID_label"
+            android:layout_margin="16dp"
+            android:src="@drawable/ewellness_logo3"/>
+
+        <EditText
+            android:id="@+id/subjectID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:textSize="25sp"
+            android:hint="Subject ID"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:layout_below="@id/subID_label"/>
+
+    </RelativeLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -73,6 +109,14 @@
 
             <ImageView
                 android:id="@+id/intro_indicator_3"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="@dimen/activity_margin_half"
+                android:layout_marginRight="@dimen/activity_margin_half"
+                android:background="@drawable/indicator_unselected" />
+
+            <ImageView
+                android:id="@+id/intro_indicator_4"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="@dimen/activity_margin_half"

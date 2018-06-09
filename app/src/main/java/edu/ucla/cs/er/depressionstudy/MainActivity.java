@@ -41,7 +41,8 @@ import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 import static android.app.Notification.DEFAULT_ALL;
 
-public class MainActivity extends AppCompatActivity {;
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private static String STUDY_URL;
     private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
             android.Manifest.permission.CAMERA,
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity {;
 
     private AlarmManager alarmMgr;
     private PendingIntent notificationIntent;
+
+    // TODO: @Kimmo, Save Subject ID in the DB.
+    private int subID;
 
     private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new NavigationView.OnNavigationItemSelectedListener() {
@@ -141,6 +145,10 @@ public class MainActivity extends AppCompatActivity {;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        subID = intent.getIntExtra("subject_id", 0);
+        Log.d(TAG, "subID = " + subID);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
@@ -283,6 +291,15 @@ public class MainActivity extends AppCompatActivity {;
                     survey = new SurveyFragment();
                     survey.setArguments(getIntent().getExtras());
                     transaction.replace(R.id.fragment_container, survey);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
+            case R.id.help:
+                if (findViewById(R.id.fragment_container) != null) {
+                    contact = new ContactFragment();
+                    contact.setArguments(getIntent().getExtras());
+                    transaction.replace(R.id.fragment_container, contact);
                     transaction.addToBackStack(null);
                     transaction.commit();
                 }
