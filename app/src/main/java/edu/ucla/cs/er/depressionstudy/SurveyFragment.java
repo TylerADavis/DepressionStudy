@@ -238,8 +238,10 @@ public class SurveyFragment extends Fragment {
         Cursor survey_data = context.getContentResolver().query(ESM_Provider.ESM_Data.CONTENT_URI, null, null, null, "timestamp DESC");
         boolean isEqual = false;
 
-        if (survey_data.getCount() > 0) {
+        // Doing it this way to make sure we dont only check the subject id, which is an ESM also
+        if (survey_data.getCount() > 1) {
             survey_data.moveToFirst();
+            survey_data.moveToNext();
             float latest_timestamp = survey_data.getFloat(survey_data.getColumnIndex("timestamp"));
             String device_ID = survey_data.getString(survey_data.getColumnIndex("device_id"));
             if (!survey_data.isClosed()) survey_data.close();
@@ -260,7 +262,7 @@ public class SurveyFragment extends Fragment {
 
 
         } else {
-            Toast.makeText(context,"Survey data is not obtained yet.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,"Survey data is not obtained yet.", Toast.LENGTH_LONG).show();
         }
 
 //        survey_data.close();
