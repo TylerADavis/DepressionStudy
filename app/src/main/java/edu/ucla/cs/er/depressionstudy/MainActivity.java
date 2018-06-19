@@ -3,11 +3,13 @@ package edu.ucla.cs.er.depressionstudy;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,6 +30,7 @@ import android.view.Window;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ESM;
+import com.aware.providers.ESM_Provider;
 import com.aware.ui.PermissionsHandler;
 
 import net.hockeyapp.android.CrashManager;
@@ -36,6 +39,8 @@ import net.hockeyapp.android.UpdateManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
@@ -79,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
     private AlarmManager alarmMgr;
     private PendingIntent notificationIntent;
-
-    // TODO: @Kimmo, Save Subject ID in the DB.
-    private int subID;
 
     private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new NavigationView.OnNavigationItemSelectedListener() {
@@ -145,10 +147,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = getIntent();
-        subID = intent.getIntExtra("subject_id", 0);
-        Log.d(TAG, "subID = " + subID);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
@@ -347,26 +345,53 @@ public class MainActivity extends AppCompatActivity {
         if (hasRequiredPermissions()) {
             if (!Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).equals(STUDY_URL)) {
                 Aware.joinStudy(getApplicationContext(), STUDY_URL);
+
+                // This needs to happen after we have joined the study, so add some delay to make
+                // sure it happens after all the web requests are finished
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveSubjectID();
+                    }
+                }, 10000);
             }
-            /*if (Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).length() == 0) {
-                Aware.joinStudy(getApplicationContext(), STUDY_URL);
-                Toast.makeText(getApplicationContext(), "Joining study", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Already in a study", Toast.LENGTH_SHORT).show();
-            }*/
-
-
 
             Intent aware = new Intent(this, Aware.class);
             startService(aware);
 
             Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
+            //Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
             Aware.startAWARE(this);
 
             //Applications.isAccessibilityServiceActive(this);
             //Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
+
+            saveSubjectID();
         } else {
             requestPermissions();
+        }
+    }
+
+    private void saveSubjectID() {
+        String subjectID = Utils.readSharedSetting(getApplicationContext(), LogoActivity.PREF_SUBJECT_ID, "0");
+        if (!subjectID.equals("0")) {
+            System.out.println("Saving subject id");
+            System.out.println(subjectID);
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.STATUS_ESM, true);
+
+            Context context = getApplicationContext();
+
+            String json = "{\"esm_type\":1, \"esm_title\":\"Subject ID\"}";
+
+            ContentValues rowData = new ContentValues();
+            rowData.put(ESM_Provider.ESM_Data.TIMESTAMP, System.currentTimeMillis());
+            rowData.put(ESM_Provider.ESM_Data.ANSWER_TIMESTAMP, System.currentTimeMillis());
+            rowData.put(ESM_Provider.ESM_Data.DEVICE_ID, Aware.getSetting(context, Aware_Preferences.DEVICE_ID));
+            rowData.put(ESM_Provider.ESM_Data.JSON, json);
+            rowData.put(ESM_Provider.ESM_Data.STATUS, ESM.STATUS_ANSWERED);
+            rowData.put(ESM_Provider.ESM_Data.ANSWER, subjectID);
+
+            context.getContentResolver().insert(ESM_Provider.ESM_Data.CONTENT_URI, rowData);
         }
     }
 

@@ -31,9 +31,9 @@ public class LogoActivity extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 2000;
     private String esmString;
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    public static final String PREF_SUBJECT_ID = "subject_id";
     public static final String TAG = "LogoActivity";
     boolean isUserFirstTime;
-    int subID;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -114,9 +114,6 @@ public class LogoActivity extends AppCompatActivity {
         Intent introIntent = new Intent(LogoActivity.this, OnboardingActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
 
-        Intent intent = getIntent();
-        subID = intent.getIntExtra("subject_id", 0);
-        Log.d(TAG, "subID = " + subID);
 
         setContentView(R.layout.activity_logo);
 
@@ -141,7 +138,6 @@ public class LogoActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Intent logoIntent = new Intent(LogoActivity.this, MainActivity.class);
-                    logoIntent.putExtra("subject_id", subID);
                     startActivity(logoIntent);
                     finish();
                 }

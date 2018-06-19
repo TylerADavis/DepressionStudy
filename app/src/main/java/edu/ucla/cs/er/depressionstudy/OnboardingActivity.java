@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import net.hockeyapp.android.utils.Util;
+
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 public class OnboardingActivity extends AppCompatActivity {
@@ -189,10 +191,11 @@ public class OnboardingActivity extends AppCompatActivity {
                     subID = Integer.valueOf(subIDTxt.getText().toString());
                     Log.d(TAG, "SubID = " + subID);
 
+                    Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_SUBJECT_ID, String.valueOf(subID));
+
                     // OnboardingActivity -> LogoActivity
                     Utils.saveSharedSetting(OnboardingActivity.this, LogoActivity.PREF_USER_FIRST_TIME, "false");
                     Intent logoIntent = new Intent(OnboardingActivity.this, LogoActivity.class);
-                    logoIntent.putExtra("subject_id", subID);
                     startActivity(logoIntent);
                     finish();
                 }
