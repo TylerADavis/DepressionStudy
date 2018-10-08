@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion compile_sdk
-    buildToolsVersion build_tools
+    //buildToolsVersion build_tools
 
     defaultConfig {
 //        applicationId 'com.aware.plugin.device_usage'
@@ -25,7 +25,7 @@ android {
     lintOptions {
         abortOnError false
     }
-    buildToolsVersion '27.0.1'
+    //buildToolsVersion '28.0.2'
 }
 
 if (System.getenv("storeFile") != null && System.getenv("storePassword") != null && System.getenv("keyAlias") != null && System.getenv("keyPassword") != null) {
@@ -74,5 +74,6 @@ dependencies {
     //implementation "com.github.denzilferreira:aware-client:$aware_libs"
     implementation "com.android.support:appcompat-v7:$support_libs"
     implementation "com.android.support:gridlayout-v7:$support_libs"
-    compile project(path: ':aware-core')
+    api project(path: ':aware-core')
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
 }

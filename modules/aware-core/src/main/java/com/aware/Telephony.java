@@ -6,7 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteException;
+import net.sqlcipher.database.SQLiteException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.CellLocation;

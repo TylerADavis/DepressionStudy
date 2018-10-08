@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion compile_sdk
-    buildToolsVersion build_tools
+    //buildToolsVersion build_tools
 
     defaultConfig {
 //        applicationId "com.aware.plugin.ambient_noise"
@@ -27,7 +27,7 @@ android {
     lintOptions {
         abortOnError false
     }
-    buildToolsVersion '27.0.1'
+    //buildToolsVersion '27.0.1'
 }
 
 if (System.getenv("storeFile") != null && System.getenv("storePassword") != null && System.getenv("keyAlias") != null && System.getenv("keyPassword") != null) {
@@ -77,6 +77,7 @@ dependencies {
     implementation "com.android.support:gridlayout-v7:$support_libs"
     implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     implementation 'me.franfernandez:fftpack:0.1'
-    compile project(path: ':aware-core')
+    api project(path: ':aware-core')
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
 }
 

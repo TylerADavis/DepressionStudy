@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion compile_sdk
-    buildToolsVersion build_tools
+    //buildToolsVersion build_tools
 
     defaultConfig {
         versionCode version_code
@@ -26,7 +26,7 @@ android {
     lintOptions {
         abortOnError false
     }
-    buildToolsVersion '27.0.1'
+    //buildToolsVersion '27.0.1'
 }
 
 if (System.getenv("storeFile") != null && System.getenv("storePassword") != null && System.getenv("keyAlias") != null && System.getenv("keyPassword") != null) {
@@ -67,5 +67,6 @@ dependencies {
     implementation "com.koushikdutta.ion:ion:$ion_libs"
     implementation "com.android.support:gridlayout-v7:$support_libs"
     implementation "com.android.support:appcompat-v7:$support_libs"
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
 }
 

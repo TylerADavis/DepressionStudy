@@ -2,19 +2,25 @@
 package com.aware.utils;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
+import net.sqlcipher.database.SQLiteException;
+import net.sqlcipher.database.SQLiteOpenHelper;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.aware.R;
@@ -24,10 +30,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 
 /**
  * ContentProvider database helper<br/>
@@ -169,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return columns;
     }
 
-    @Override
+    //@Override
     public synchronized SQLiteDatabase getWritableDatabase() {
         try {
             if (database != null) {
@@ -203,7 +220,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    @Override
+    //@Override
     public synchronized SQLiteDatabase getReadableDatabase() {
         try {
             if (database != null) {
@@ -243,10 +260,91 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 aware_folder.mkdirs();
             }
 
-            database = SQLiteDatabase.openOrCreateDatabase(new File(aware_folder, this.databaseName).getPath(), this.cursorFactory);
+            String password = getDatabasePassword();
+
+            SQLiteDatabase.loadLibs(mContext);
+            database = SQLiteDatabase.openOrCreateDatabase(new File(aware_folder, this.databaseName).getPath(), "PASSWORD", this.cursorFactory);
             return database;
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             return null;
         }
+    }
+
+    private String getDatabasePassword() {
+        Context ctx = mContext.getApplicationContext();
+        SharedPreferences prefs = ctx.getSharedPreferences("EWELLNESS_PREFS", Context.MODE_PRIVATE);
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String KEY_ALIAS = "EWELLNESS_KEY";
+        String AES_MODE = "AES/GCM/NoPadding";
+        String IV_KEY = "INITIALIZATION_VECTOR";
+        String PASSWORD_KEY = "DB_PASSWORD";
+        String KEY_STORE = "AndroidKeyStore";
+        Charset charset = StandardCharsets.UTF_8;
+        int IV_LENGTH = 12;
+
+        if (prefs.contains(PASSWORD_KEY) && prefs.contains(IV_KEY)) {
+            byte[] encryptedPassword = Base64.decode(prefs.getString(PASSWORD_KEY, null), Base64.DEFAULT);;
+            String IVString = prefs.getString(IV_KEY, null);
+            byte[] IV = Base64.decode(IVString, Base64.DEFAULT);
+
+            try {
+                KeyStore keyStore = KeyStore.getInstance(KEY_STORE);
+                keyStore.load(null);
+                SecretKey key = ((KeyStore.SecretKeyEntry) keyStore.getEntry(KEY_ALIAS, null)).getSecretKey();
+
+                Cipher c = Cipher.getInstance(AES_MODE);
+
+                c.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, IV));
+                String decodedPassword = new String(c.doFinal(encryptedPassword), charset);
+                return decodedPassword;
+            } catch (Exception ex) {
+                System.out.println("Something went wrong with decoding database password");
+                System.out.println("exception: " + ex);
+                System.out.println("message: " + ex.getCause());
+
+            }
+        } else {
+            try {
+                System.out.println("Trying to generate a new password");
+                KeyGenerator keyGenerator = KeyGenerator
+                        .getInstance(KeyProperties.KEY_ALGORITHM_AES, KEY_STORE);
+                KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        //.setRandomizedEncryptionRequired(false)
+                        .build();
+                keyGenerator.init(spec);
+                SecretKey key = keyGenerator.generateKey();
+
+                Cipher c = Cipher.getInstance(AES_MODE);
+
+                c.init(Cipher.ENCRYPT_MODE, key);
+
+                SharedPreferences.Editor prefEditor = prefs.edit();
+
+                // TODO: RANDOM PASSWORD
+                String password = java.util.UUID.randomUUID().toString();
+                byte[] encryptedBytes = c.doFinal(password.getBytes(charset));
+                String encryptedPassword = Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+                prefEditor.putString(PASSWORD_KEY, encryptedPassword);
+
+                GCMParameterSpec gcmspec = c.getParameters().getParameterSpec(GCMParameterSpec.class);
+                byte[] IV = gcmspec.getIV();
+                String IVString = Base64.encodeToString(IV, Base64.DEFAULT);
+                prefEditor.putString(IV_KEY, IVString);
+
+
+                boolean commitSuccess = prefEditor.commit();
+
+                return password;
+            } catch (Exception e) {
+                System.out.println("Generating database password failed");
+                System.out.println(e.toString());
+                System.out.println(e.getMessage());
+            }
+        }
+
+        return null;
     }
 }

@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteException;
+import net.sqlcipher.database.SQLiteException;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;

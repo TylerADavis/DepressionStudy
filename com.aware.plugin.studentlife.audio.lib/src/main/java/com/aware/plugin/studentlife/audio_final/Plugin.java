@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteException;
+import net.sqlcipher.database.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
 

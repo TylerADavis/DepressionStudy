@@ -9,7 +9,7 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteException;
+import net.sqlcipher.database.SQLiteException;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
