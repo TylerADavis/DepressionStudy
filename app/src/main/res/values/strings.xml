@@ -34,36 +34,39 @@
         to which measures of mental health.</string>
     <string name="contact">Please, get in touch with us to report any
     issues or recommendations about the app.</string>
-    <string name="survey">Instruction: When you want to complete the daily survey, press the button to view the questionnaire. </string>
+    <string name="survey">Instruction: Please select one of the following surveys you have been instructed to complete. Only complete one survey per day. </string>
     <string name="survey_done">You have already taken the daily survey today. You can change your answers by taking the survey again.</string>
     <string name="welcome">Welcome to eWellness app. This app will monitor your smartphone activity</string>
 
-    <string name="consent_title">UNIVERSITY OF CALIFORNIA \nLOS ANGELES (UCLA) \nSTUDY INFORMATION SHEET</string>
-    <string name="consent_subtitle">Passive Sensing of Mental Wellness</string>
-    <string name="consent_subtitle_p0">Dr. Majid Sarrafzadeh, from the Computer Science Department at the University of California, Los Angeles (UCLA) is conducting a research study.
-        \n\nYou were selected as a possible participant in this study because you are a current student, employee, or affiliate of the university.  Your participation in this research study is voluntary.</string>
-    <string name="consent_t1">Why is this study being done?</string>
-    <string name="consent_p1">This study aims to determine if data that can be collected passively off your phone,
-        can be predictive of your mental wellness at a given time. This data is limited to embedded sensors like GPS, light, and accelerometer,
-        and will not collect any personally identifiable information on you. Our eventual hope is to create a platform that can predict if a person
-        is in crises and direct help to them without them needing to actively seek out help.</string>
-    <string name="consent_t2">What will happen if I take part in this research study?</string>
-    <string name="consent_p2">If you volunteer to participate in this study, the researcher will ask you to do the following:
-        \n\n    ● Fill out a survey consisting of 24 multiple-choice questions once a week for the duration of the study
-        \n      ● Fill out a small daily questionnaire of 10 multiple-choice questions.
-        \n      ● Install the app and have it running on your phone in the background throughout the day.</string>
-    <string name="consent_t3">How long will I be in the research study?</string>
-    <string name="consent_p3">Participation will take a total of about 1 hour spread over the course of a month’s time.
-        The only time requirements for the study will be installing the application, and taking the surveys.
-        It is anticipated that the weekly survey will take no more than 5 minutes, and the daily survey no more than 1 minute. </string>
-    <string name="consent_t4">Are there any potential risks or discomforts that I can expect from this study?</string>
-    <string name="consent_p4">● Running a mobile application in the background may negatively impact the battery life and performance of the phone. We have taken steps to diminish the impact of the application, but some degradation is expected.
-        \n● While the questionnaires are minimally intrusive, it is possible that probing your mental wellness state may engender some discomfort or unease. Please immediately discontinue the study if you feel the questioning to be discomforting.
-        </string>
-    <string name="consent_t5">Are there any potential benefits if I participate?</string>
-    <string name="consent_p5">You may benefit from the study by becoming more aware of daily stressors and being more mindful of your mental state.
-        \n\nThe results of the research may be included in future grant proposals or research publications. None of your specific data will be included in any public disclosure.
-        </string>
+    <string name="consent_title">DEPARTMENT OF VETERAN AFFAIRS\nGREATER LOS ANGELES \nSTUDY INFORMATION INTRODUCTION</string>
+    <string name="consent_subtitle">Pilot Study of Mobile Sensing Data to Evaluate Mental Health Status</string>
+    <string name="consent_subtitle_p0">You are being invited to take part in a research study at the VA Greater Los Angeles Healthcare
+System under the direction of Dr. Alexander Young and his research team. Before you decide to take
+part, it is important for you to know why the research is being done and what it will involve. This
+includes any potential risks to you, as well as any potential benefits to you and/or to the future
+population of individuals you represent.</string>
+    <string name="consent_p1">Read the information on the Research Consent form you have been provided closely, and discuss it with family and friends if you wish. Ask one of the
+study staff if there is anything that is not clear or if you would like more details. Take your time to
+decide. If you do decide to take part, your signature on this consent form will show that you received all
+of the information below, and that you were able to discuss any questions and concerns you had with a
+member of the study team. \nYour participation in this study is voluntary. If you don’t take part, you can still receive all usual care that
+is available to you. Your decision not to take part will not affect the relationship you have with your
+doctor or other staff, and it will not affect the usual care that you receive as a patient. If you decide to
+take part, you may still withdraw at any time. If you do not wish to be in this study or leave the study
+early, you will not lose any benefits to which you are entitled.</string>
+    <string name="consent_t2">BACKGROUND AND PURPOSE</string>
+    <string name="consent_p2">The purpose of this project is to study a mobile phone-based sensing platform (a mobile application or
+“app”) that might be able to detect some mental health trends or stress. The application collects
+information from your mobile phone and transmits it to the research team. Such information could help
+improve mental health assessment and care in the future. This project will study the platform to see
+how useful it is in detecting mental health problems. /nYou are being asked to participate because youare an adult with a serious mental illness (a diagnosis of bipolar disorder, schizophrenia, schizoaffective disorder, or recurrent major depression with psychosis) who owns a phone running Android OS and you are currently receiving care at this facility.
+/n About 30 people will take part in this study at VA Greater Los Angeles Healthcare System. Your participation in this research study is voluntary.</string>
+    <string name="consent_t3">DURATION OF THE RESEARCH</string>
+    <string name="consent_p3">Your participation in the project will last about 1 month.</string>
+    <string name="consent_t4">ADDITIONAL INFORMATION</string>
+    <string name="consent_p4">For additional information on the study please review the provided documentation or contact a stud administrator. </string>
+    <string name="consent_t5">STUDY CONTACT</string>
+    <string name="consent_p5">Principal Investigator: Alexander S. Young, MD, MSHS \nPhone: 310-268-3416</string>
     <string name="consent_t6">What other choices do I have if I choose not to participate?</string>
     <string name="consent_p6">As a student or university affiliate, your participation in this study will be entirely voluntary. Failure to complete or participate in the study will have no impact on your academic or employment status in the university. Conversely successful participation will not accord you any benefits beyond the explicit compensation mentioned below.
         </string>
@@ -95,8 +98,8 @@
         some specific prompts around your feelings of depression and anxiety. Although this information
         is being recorded for the study, your responses will not be reviewed regularly by researchers.
         \n\nAs such, if you ever feel overwhelmed, or that you need help, please do expect us to detect this
-        and act on your behalf, but instead reach out to the appropriate resource. We’ve included a
-        ‘Need Help?’ tab in the menu with contact info for a variety of UCLA and community resources
+        and act on your behalf, but instead reach out to your appropriate caregiver within the VA. We’ve included a
+        ‘Need Help?’ tab in the menu with contact info for a variety of VA and community resources that are also
         available to you.</string>
     
     <string name="collect_title">Data Collection Permission</string>
@@ -117,21 +120,9 @@
 
     <string name="help_content1">IF YOU ARE EXPERIENCING A LIFE THREATENING EMERGENCY,
         CALL 9-1-1 OR GO TO YOUR NEAREST HOSPITAL EMERGENCY ROOM.</string>
-    <string name="help_content2">For emergency assistance:
-        \n\nUC Police Department (UCPD)
-        Call 9-1-1 or (310) 825-1491
-        Ronald Reagan UCLA Medical Center
-        Map to Medical Center
-        (310) 825-9111 Main line
-        (310) 825-2111 Emergency Department</string>
-    <string name="help_content3">If you are having thoughts about suicide:
-        \n\nCAPS (24 hours): (310) 825-0768
-        National Suicide Prevention Hotline (24 hours): (800) 273-TALK (8255) or chat online
-        Crisis Text Line (24 hours): Text 741-741 from anywhere in the USA, anytime, about any type of crisis.
-        </string>
-    <string name="help_content4">If you are a UCLA student experiencing a mental health crisis:
-        \n\nCall (310) 825-0768 or visit CAPS during Brief Screen hours: Monday-Friday 9am-4pm
-        </string>
+    <string name="help_content2">If you are a Veteran in crisis — or you’re concerned about one — free, confidential support is available 24/7. Call the Veterans Crisis Line at 1-800-273-8255 and Press 1, send a text message to 838255, or chat online at: https://www.veteranscrisisline.net/get-help/chat.</string>
+    <string name="help_content3"></string>
+    <string name="help_content4"></string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
