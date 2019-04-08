@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">eWellness</string>
+    <string name="app_name">mWellness</string>
     <string name="title_heartrate">Heart Rate</string>
     <string name="title_sleepmonitor">Sleep Monitor</string>
     <string name="title_questionnaires">Questionnaires</string>
@@ -36,40 +36,23 @@
     issues or recommendations about the app.</string>
     <string name="survey">Instruction: Please select one of the following surveys you have been instructed to complete. Only complete one survey per day. </string>
     <string name="survey_done">You have already taken the daily survey today. You can change your answers by taking the survey again.</string>
-    <string name="welcome">Welcome to eWellness app. This app will monitor your smartphone activity</string>
+    <string name="welcome">Welcome to mWellness app. This app will monitor your smartphone activity</string>
 
     <string name="consent_title">DEPARTMENT OF VETERAN AFFAIRS\nGREATER LOS ANGELES \nSTUDY INFORMATION INTRODUCTION</string>
     <string name="consent_subtitle">Pilot Study of Mobile Sensing Data to Evaluate Mental Health Status</string>
-    <string name="consent_subtitle_p0">You are being invited to take part in a research study at the VA Greater Los Angeles Healthcare
-System under the direction of Dr. Alexander Young and his research team. Before you decide to take
-part, it is important for you to know why the research is being done and what it will involve. This
-includes any potential risks to you, as well as any potential benefits to you and/or to the future
-population of individuals you represent.</string>
-    <string name="consent_p1">Read the information on the Research Consent form you have been provided closely, and discuss it with family and friends if you wish. Ask one of the
-study staff if there is anything that is not clear or if you would like more details. Take your time to
-decide. If you do decide to take part, your signature on this consent form will show that you received all
-of the information below, and that you were able to discuss any questions and concerns you had with a
-member of the study team. \nYour participation in this study is voluntary. If you don’t take part, you can still receive all usual care that
-is available to you. Your decision not to take part will not affect the relationship you have with your
-doctor or other staff, and it will not affect the usual care that you receive as a patient. If you decide to
-take part, you may still withdraw at any time. If you do not wish to be in this study or leave the study
-early, you will not lose any benefits to which you are entitled.</string>
+    <string name="consent_subtitle_p0">You are being invited to take part in a research study at the VA Greater Los Angeles Healthcare System under the direction of Dr. Alexander Young and his research team. Before you decide to take part, it is important for you to know why the research is being done and what it will involve. This includes any potential risks to you, as well as any potential benefits to you and/or to the future population of individuals you represent.</string>
+    <string name="consent_p1">Read the information on the Research Consent form you have been provided closely, and discuss it with family and friends if you wish. Ask one of the study staff if there is anything that is not clear or if you would like more details. Take your time to decide. If you do decide to take part, your signature on this consent form will show that you received all of the information below, and that you were able to discuss any questions and concerns you had with a member of the study team. Your participation in this study is voluntary. If you don’t take part, you can still receive all usual care that is available to you. Your decision not to take part will not affect the relationship you have with your
+doctor or other staff, and it will not affect the usual care that you receive as a patient. If you decide to take part, you may still withdraw at any time. If you do not wish to be in this study or leave the study early, you will not lose any benefits to which you are entitled.</string>
     <string name="consent_t2">BACKGROUND AND PURPOSE</string>
-    <string name="consent_p2">The purpose of this project is to study a mobile phone-based sensing platform (a mobile application or
-“app”) that might be able to detect some mental health trends or stress. The application collects
-information from your mobile phone and transmits it to the research team. Such information could help
-improve mental health assessment and care in the future. This project will study the platform to see
-how useful it is in detecting mental health problems. /nYou are being asked to participate because youare an adult with a serious mental illness (a diagnosis of bipolar disorder, schizophrenia, schizoaffective disorder, or recurrent major depression with psychosis) who owns a phone running Android OS and you are currently receiving care at this facility.
+    <string name="consent_p2">The purpose of this project is to study a mobile phone-based sensing platform (a mobile application or “app”) that might be able to detect some mental health trends or stress. The application collects information from your mobile phone and transmits it to the research team. Such information could help improve mental health assessment and care in the future. This project will study the platform to see how useful it is in detecting mental health problems. You are being asked to participate because you are an adult with a serious mental illness (a diagnosis of bipolar disorder, schizophrenia, schizoaffective disorder, or recurrent major depression with psychosis) who owns a phone running Android OS and you are currently receiving care at this facility.
 /n About 30 people will take part in this study at VA Greater Los Angeles Healthcare System. Your participation in this research study is voluntary.</string>
     <string name="consent_t3">DURATION OF THE RESEARCH</string>
     <string name="consent_p3">Your participation in the project will last about 1 month.</string>
     <string name="consent_t4">ADDITIONAL INFORMATION</string>
-    <string name="consent_p4">For additional information on the study please review the provided documentation or contact a stud administrator. </string>
+    <string name="consent_p4">For additional information on the study please review the provided documentation or contact a study administrator. </string>
     <string name="consent_t5">STUDY CONTACT</string>
     <string name="consent_p5">Principal Investigator: Alexander S. Young, MD, MSHS \nPhone: 310-268-3416</string>
-    <string name="consent_t6">What other choices do I have if I choose not to participate?</string>
-    <string name="consent_p6">As a student or university affiliate, your participation in this study will be entirely voluntary. Failure to complete or participate in the study will have no impact on your academic or employment status in the university. Conversely successful participation will not accord you any benefits beyond the explicit compensation mentioned below.
-        </string>
+
     <string name="consent_t7">Will I be paid for participating?</string>
     <string name="consent_p7">You will receive an Amazon gift card for the successful participation in the survey. This will require your active participation throughout the data collection process. The precise amount offered will be dependent on the duration and consistency of involvement. Failure to remain actively engaged in the study may result in forfeiture of the gift card.</string>
     <string name="consent_t8">Will information about me and my participation be kept confidential?</string>
@@ -94,13 +77,7 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
 
     <string name="notice_title">Mental Health Notice</string>
     <string name="notice_subtitle">A brief note on your mental health:</string>
-    <string name="notice_p">Our daily survey will be prompting you for information on your mental well-being. This will include
-        some specific prompts around your feelings of depression and anxiety. Although this information
-        is being recorded for the study, your responses will not be reviewed regularly by researchers.
-        \n\nAs such, if you ever feel overwhelmed, or that you need help, please do expect us to detect this
-        and act on your behalf, but instead reach out to your appropriate caregiver within the VA. We’ve included a
-        ‘Need Help?’ tab in the menu with contact info for a variety of VA and community resources that are also
-        available to you.</string>
+    <string name="notice_p">Our daily survey will be prompting you for information on your mental well-being. This will include some specific prompts around your feelings of depression and anxiety. Although this information is being recorded for the study, your responses will not be reviewed regularly by researchers. As such, if you ever feel overwhelmed, or that you need help, please do expect us to detect this and act on your behalf, but instead reach out to your appropriate caregiver within the VA. We’ve included a ‘Need Help?’ tab in the menu with contact info for a variety of VA and community resources that are also available to you.</string>
     
     <string name="collect_title">Data Collection Permission</string>
     <string name="collect_p1">We’re about to ask you to allow a bunch of intrusive permissions for our app, so before we do, we wanted to explain precisely what information we will be collecting and how it will be used.

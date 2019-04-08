@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+            STUDY_URL = "https://va.erlabdemo.com/index.php/webservice/index/81/3wg1eHEUwTNh";
         } else {
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+            STUDY_URL = "https://va.erlabdemo.com/index.php/webservice/index/81/3wg1eHEUwTNh";
         }
 
         setContentView(R.layout.activity_main);

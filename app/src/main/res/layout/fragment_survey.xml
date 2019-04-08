@@ -74,7 +74,7 @@
             android:layout_marginBottom="8dp"
             android:layout_toEndOf="@+id/bt_start7"
             android:background="@color/colorPrimary"
-            android:text="K10"
+            android:text="Stress"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -90,7 +90,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:background="@color/colorPrimary"
-            android:text="Lubben"
+            android:text="Network"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -108,7 +108,7 @@
             android:layout_marginBottom="8dp"
             android:layout_toEndOf="@+id/bt_start3"
             android:background="@color/colorPrimary"
-            android:text="OFSC"
+            android:text="Social"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -142,7 +142,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:background="@color/colorPrimary"
-            android:text="  PQSI"
+            android:text="Sleep"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -158,7 +158,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/colorPrimary"
-            android:text="SFS"
+            android:text="Activity"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -176,7 +176,7 @@
             android:layout_marginBottom="16dp"
             android:layout_toEndOf="@+id/bt_start4"
             android:background="@color/colorPrimary"
-            android:text="SSRS"
+            android:text="Harm"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 

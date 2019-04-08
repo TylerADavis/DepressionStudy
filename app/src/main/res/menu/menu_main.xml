@@ -12,13 +12,13 @@
         app:showAsAction="never"
         android:title="@string/title_info" />
     <item
+        android:id="@+id/help"
+        android:orderInCategory="100"
+        android:title="@string/title_help"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/terminate"
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/title_exit" />
-    <item
-        android:id="@+id/help"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/title_help" />
 </menu>

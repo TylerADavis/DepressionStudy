@@ -11,13 +11,14 @@
         android:layout_height="250dp"
         android:layout_gravity="center"
         android:background="@drawable/circle" />
+
     <TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:keepScreenOn="true"
-        android:text="eWellness"
+        android:text="mWellness"
         android:textColor="#fdfcfc"
         android:textSize="50sp"
         android:textStyle="normal" />
