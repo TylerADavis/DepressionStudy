@@ -172,9 +172,12 @@ public class MainActivity extends AppCompatActivity {
                 Analytics.class, Crashes.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+            //original study
+//            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/2326/m8Fy5lEoqFp1";
         } else {
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+//            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
+            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/2326/m8Fy5lEoqFp1";
         }
 
         setContentView(R.layout.activity_main);
