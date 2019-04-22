@@ -9,6 +9,7 @@
     <string name="title_info">Information</string>
     <string name="title_survey">Assessment</string>
     <string name="title_help">Need Help?</string>
+    <string name="title_status">App Status</string>
 
     <string name="title_activity_logo">LogoActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -37,7 +38,8 @@
     <string name="survey">Instruction: Please select one of the following surveys you have been instructed to complete. Only complete one survey per day. </string>
     <string name="survey_done">You have already taken the daily survey today. You can change your answers by taking the survey again.</string>
     <string name="welcome">Welcome to eWellness app. This app will monitor your smartphone activity</string>
-
+// VA text!
+    <!--
     <string name="consent_title">DEPARTMENT OF VETERAN AFFAIRS\nGREATER LOS ANGELES \nSTUDY INFORMATION INTRODUCTION</string>
     <string name="consent_subtitle">Pilot Study of Mobile Sensing Data to Evaluate Mental Health Status</string>
     <string name="consent_subtitle_p0">You are being invited to take part in a research study at the VA Greater Los Angeles Healthcare
@@ -91,15 +93,16 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
         </string>
     <string name="consent_t11">By selecting this you acknowledge that you have received and understood the terms of the study. By proceeding to study enrollment you are agreeing to participate in the study.
         </string>
+        -->
 
     <string name="notice_title">Mental Health Notice</string>
     <string name="notice_subtitle">A brief note on your mental health:</string>
-    <string name="notice_p">Our daily survey will be prompting you for information on your mental well-being. This will include
+    <string name="notice_p">Our study will be prompting you for information on your mental well-being. This will include
         some specific prompts around your feelings of depression and anxiety. Although this information
         is being recorded for the study, your responses will not be reviewed regularly by researchers.
-        \n\nAs such, if you ever feel overwhelmed, or that you need help, please do expect us to detect this
-        and act on your behalf, but instead reach out to your appropriate caregiver within the VA. We’ve included a
-        ‘Need Help?’ tab in the menu with contact info for a variety of VA and community resources that are also
+        \n\nAs such, if you ever feel overwhelmed, or that you need help, please do not expect us to detect this
+        and act on your behalf, but instead reach out to an appropriate caregiver. We’ve included a
+        ‘Need Help?’ tab in the menu with contact info for a variety of clinical and community resources that are also
         available to you.</string>
     
     <string name="collect_title">Data Collection Permission</string>
@@ -120,13 +123,85 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
 
     <string name="help_content1">IF YOU ARE EXPERIENCING A LIFE THREATENING EMERGENCY,
         CALL 9-1-1 OR GO TO YOUR NEAREST HOSPITAL EMERGENCY ROOM.</string>
+    //VA Specific Language
+    <!--
     <string name="help_content2">If you are a Veteran in crisis — or you’re concerned about one — free, confidential support is available 24/7. Call the Veterans Crisis Line at 1-800-273-8255 and Press 1, send a text message to 838255, or chat online at: https://www.veteranscrisisline.net/get-help/chat.</string>
     <string name="help_content3"></string>
-    <string name="help_content4"></string>
+    <string name="help_content4"></string> -->
+//UCLA Specific Language
+    <string name="help_content2"> For emergency assistance:
+    \n\nUC Police Department (UCPD)
+    Call 9-1-1 or (310) 825-1491
+    Ronald Reagan UCLA Medical Center
+    Map to Medical Center
+    (310) 825-9111 Main line
+    (310) 825-2111 Emergency Department</string>
+    <string name="help_content3">If you are having thoughts about suicide:
+        \n\nCAPS (24 hours): (310) 825-0768
+        National Suicide Prevention Hotline (24 hours): (800) 273-TALK (8255) or chat online
+        Crisis Text Line (24 hours): Text 741-741 from anywhere in the USA, anytime, about any type of crisis.
+        </string>
+    <string name="help_content4">If you are a UCLA student experiencing a mental health crisis:
+        \n\nCall (310) 825-0768 or visit CAPS during Brief Screen hours: Monday-Friday 9am-4pm
+        </string>
+
+    <string name="status">The eWellness Application appears to be functioning properly. Please keep the application installed on your phone for the duration of the study.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_onboarding">OnboardingActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+//UCLA Pilot Specific Text
+    <string name="consent_title">UNIVERSITY OF CALIFORNIA \nLOS ANGELES (UCLA) \nSTUDY INFORMATION SHEET</string>
+    <string name="consent_subtitle">Passive Sensing of Mental Wellness</string>
+    <string name="consent_subtitle_p0">Dr. Majid Sarrafzadeh, from the Computer Science Department at the University of California, Los Angeles (UCLA) is conducting a research study.
+        \n\nYou were selected as a possible participant in this study because you are a current student, employee, or affiliate of the university.  Your participation in this research study is voluntary.</string>
+    <string name="consent_t1">Why is this study being done?</string>
+    <string name="consent_p1">This study aims to determine if data that can be collected passively off your phone,
+        can be predictive of your mental wellness at a given time. This data is limited to embedded sensors like GPS, light, and accelerometer,
+        and will not collect any personally identifiable information on you. Our eventual hope is to create a platform that can predict if a person
+        is in crises and direct help to them without them needing to actively seek out help.</string>
+    <string name="consent_t2">What will happen if I take part in this research study?</string>
+    <string name="consent_p2">If you volunteer to participate in this study, the researcher will ask you to do the following:
+        \n\n    ● Complete a once-weekly phone questionnaire
+        \n      ● Fill out a questionnaire at the conclusion of the study
+        \n      ● Install the app and have it running on your phone in the background throughout the day.</string>
+    <string name="consent_t3">How long will I be in the research study?</string>
+    <string name="consent_p3">Participation will take a total of about 1 hour spread over the course of a month’s time.
+        The only time requirements for the study will be installing the application, and taking the surveys.
+        It is anticipated that the weekly survey will take no more than 5 minutes, and the daily survey no more than 1 minute. </string>
+    <string name="consent_t4">Are there any potential risks or discomforts that I can expect from this study?</string>
+    <string name="consent_p4">● Running a mobile application in the background may negatively impact the battery life and performance of the phone. We have taken steps to diminish the impact of the application, but some degradation is expected.
+        \n● While the questionnaires are minimally intrusive, it is possible that probing your mental wellness state may engender some discomfort or unease. Please immediately discontinue the study if you feel the questioning to be discomforting.
+        </string>
+    <string name="consent_t5">Are there any potential benefits if I participate?</string>
+    <string name="consent_p5">You may benefit from the study by becoming more aware of daily stressors and being more mindful of your mental state.
+        \n\nThe results of the research may be included in future grant proposals or research publications. None of your specific data will be included in any public disclosure.
+        </string>
+    <string name="consent_t6">What other choices do I have if I choose not to participate?</string>
+    <string name="consent_p6">As a student or university affiliate, your participation in this study will be entirely voluntary. Failure to complete or participate in the study will have no impact on your academic or employment status in the university. Conversely successful participation will not accord you any benefits beyond the explicit compensation mentioned below.
+        </string>
+    <string name="consent_t7">Will I be paid for participating?</string>
+    <string name="consent_p7">You will receive an Amazon gift card valued at $50 for the successful participation in the study. This will require your active participation throughout the data collection process. Failure to remain actively engaged in the study may result in forfeiture of the gift card.</string>
+    <string name="consent_t8">Will information about me and my participation be kept confidential?</string>
+    <string name="consent_p8">Any information that is obtained in connection with this study and that can identify you will remain confidential. It will be disclosed only with your permission or as required by law. Confidentiality will be maintained by limiting collection solely to non-identifiable data. All collected data will be stored on a secure fully encrypted server, and will only be made available to research study investigators.
+    \n\nThe researchers will do their best to make sure that your private information is kept confidential. Information about you will be handled as confidentially as possible, but participating in research may involve a loss of privacy and the potential for a breach in confidentiality. Study data will be physically and electronically secured. As with any use of electronic means to store data, there is a risk of breach of data security.
+    \n\nNo identifiable information about you will be kept with the research data. All research data and records will be maintained in a secure location at UCLA. Only authorized individuals will have access to it. The research team, authorized UCLA personnel and regulatory agencies such as the Food and Drug Administration (FDA), may have access to study data and records to monitor the study. Research records provided to authorized,
+        non-UCLA personnel will not contain identifiable information about you. Publications and/or presentations that result from this study will not identify you by name. The researchers intend to keep the research data and records indefinitely for future research.</string>
+    <string name="consent_t9">What are my rights if I take part in this study?</string>
+    <string name="consent_p9">● You can choose whether or not you want to be in this study, and you may withdraw your consent and discontinue participation at any time.
+        \n      ● Whatever decision you make, there will be no penalty to you, and no loss of benefits to which you were otherwise entitled.
+        \n      ● You may refuse to answer any questions that you do not want to answer and still remain in the study.
+        </string>
+    <string name="consent_t10">Who can I contact if I have questions about this study?</string>
+    <string name="consent_p10">● <b>The research team:</b>
+        \nIf you have any questions, comments or concerns about the research, you can talk to the one of the researchers. Please contact:
+        \n\nLionel Levine at 213-444-6622 or <u>Lionel@cs.ucla.edu</u>.
+        \n\n● <b>UCLA Office of the Human Research Protection Program (OHRPP):</b>
+        \nIf you have questions about your rights as a research subject, or you have concerns or suggestions and you want to talk to someone other than the researchers, you may contact the UCLA OHRPP by phone: (310) 206-2040; by email: <u>participants@research.ucla.edu</u> or by mail: Box 951406, Los Angeles, CA 90095-1406.
+        </string>
+    <string name="consent_t11">By selecting this you acknowledge that you have received and understood the terms of the study. By proceeding to study enrollment you are agreeing to participate in the study.
+        </string>
     
 </resources>

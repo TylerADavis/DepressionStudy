@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/status"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/title_status" />
+    <item
         android:id="@+id/survey"
         android:orderInCategory="100"
         app:showAsAction="never"
@@ -12,13 +17,13 @@
         app:showAsAction="never"
         android:title="@string/title_info" />
     <item
-        android:id="@+id/terminate"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/title_exit" />
-    <item
         android:id="@+id/help"
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/title_help" />
+    <item
+        android:id="@+id/terminate"
+        android:orderInCategory="100"
+        android:title="@string/title_exit"
+        app:showAsAction="never" />
 </menu>

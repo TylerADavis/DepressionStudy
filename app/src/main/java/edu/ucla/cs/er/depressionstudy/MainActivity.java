@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -39,12 +38,15 @@ import net.hockeyapp.android.UpdateManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Dictionary;
-import java.util.HashMap;
 
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 import static android.app.Notification.DEFAULT_ALL;
+
+//New for aware
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private LogoFragment logo;
     private Bundle bundle;
     private Window window;
+    private StatusFragment status;
 
     private static int SPLASH_TIME_OUT = 1000;
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
@@ -92,6 +95,21 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             switch (item.getItemId()) {
+                case R.id.navigation_status_new:
+                    if (findViewById(R.id.fragment_container) != null) {
+                        status = new StatusFragment();
+                        status.setArguments(getIntent().getExtras());
+                        transaction.replace(R.id.fragment_container, status);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                    mActivityTitle = getResources().getString(R.string.title_status);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorStatus)));
+                    window.setStatusBarColor(getResources().getColor(R.color.colorStatus));
+                    return true;
+
+
                 case R.id.navigation_questionnaires:
                     if (findViewById(R.id.fragment_container) != null) {
                         survey = new SurveyFragment();
@@ -105,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorSurvey)));
                     window.setStatusBarColor(getResources().getColor(R.color.colorSurvey));
                     return true;
+
                 case R.id.navigation_contactus:
                     if (findViewById(R.id.fragment_container) != null) {
                         contact = new ContactFragment();
@@ -118,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
                     window.setStatusBarColor(getResources().getColor(R.color.colorContact));
                     return true;
+
                 case R.id.navigation_about:
                     // Check that the activity is using the layout version with
                     // the fragment_container FrameLayout
@@ -147,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppCenter.start(getApplication(), "272a2395-8aa0-4c7c-8f0e-8c394edf22cf",
+                Analytics.class, Crashes.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
@@ -185,21 +208,30 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
 //        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+// Here's where we set the initial homepage. I've set it to be the status screen.
+//        if (findViewById(R.id.fragment_container) != null) {
+//            survey = new SurveyFragment();
+//            survey.setArguments(getIntent().getExtras());
+//            transaction_sec.replace(R.id.fragment_container, survey);
+//            transaction_sec.addToBackStack(null);
+//            transaction_sec.commit();
+//        }
+
         if (findViewById(R.id.fragment_container) != null) {
-            survey = new SurveyFragment();
-            survey.setArguments(getIntent().getExtras());
-            transaction_sec.replace(R.id.fragment_container, survey);
+            status = new StatusFragment();
+            status.setArguments(getIntent().getExtras());
+            transaction_sec.replace(R.id.fragment_container, status);
             transaction_sec.addToBackStack(null);
             transaction_sec.commit();
         }
-
 //        initialFragment();
         checkForUpdates();
         initializeAware();
-        scheduleNotifications();
+//        scheduleNotifications();
     }
 
-    private void scheduleNotifications() {
+    //to schedule notification
+ /*   private void scheduleNotifications() {
         System.out.println("Scheduling notifications..");
 
         Context context = getApplicationContext();
@@ -235,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, notificationIntent);
 
         System.out.println("Scheduled notifications");
-    }
+    }*/
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -293,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.commit();
                 }
                 return true;
+
             case R.id.help:
                 if (findViewById(R.id.fragment_container) != null) {
                     contact = new ContactFragment();
@@ -302,6 +335,16 @@ public class MainActivity extends AppCompatActivity {
                     transaction.commit();
                 }
                 return true;
+            case R.id.status:
+                if (findViewById(R.id.fragment_container) != null) {
+                    status = new StatusFragment();
+                    status.setArguments(getIntent().getExtras());
+                    transaction.replace(R.id.fragment_container, status);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -476,10 +519,17 @@ public class MainActivity extends AppCompatActivity {
 
                 // Initial Fragment
 //                getSupportActionBar().show();
+//                if (findViewById(R.id.fragment_container) != null) {
+//                    survey = new SurveyFragment();
+//                    survey.setArguments(getIntent().getExtras());
+//                    transaction_sec.replace(R.id.fragment_container, survey);
+//                    transaction_sec.addToBackStack(null);
+//                    transaction_sec.commit();
+//                }
                 if (findViewById(R.id.fragment_container) != null) {
-                    survey = new SurveyFragment();
-                    survey.setArguments(getIntent().getExtras());
-                    transaction_sec.replace(R.id.fragment_container, survey);
+                    status = new StatusFragment();
+                    status.setArguments(getIntent().getExtras());
+                    transaction_sec.replace(R.id.fragment_container, status);
                     transaction_sec.addToBackStack(null);
                     transaction_sec.commit();
                 }

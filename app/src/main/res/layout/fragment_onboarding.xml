@@ -40,7 +40,7 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-
+//For VA Study
             <LinearLayout
                 android:id="@+id/consent"
                 android:layout_width="match_parent"
@@ -176,7 +176,7 @@
                     android:layout_marginStart="@dimen/activity_horizontal_margin"/>
 
             </LinearLayout>
-
+//End VA Info Study
             <LinearLayout
                 android:id="@+id/mentalhealth_notice"
                 android:layout_width="match_parent"
