@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AWARE</string>
-    <string name="aware_description">AWARE is an Android\'s framework dedicated to infer, log and share mobile context information between mobile applications. Visit http://awareframework.com for details.</string>
+    <string name="app_name">eWellness</string>
+    <string name="aware_description">eWellness is an application dedicated to infer, log and share mobile context information.</string>
     <string name="read_permission">Allow read-only access to the local data.</string>
     <string name="write_permission">Allow read and write access to the local data.</string>
     <string name="aware_studies">AWARE Studies</string>
@@ -10,7 +10,7 @@
     <string name="aware_plugins">AWARE Plugins</string>
     <string name="aware_esm_questions_title">Questionnaire waiting</string>
     <string name="aware_esm_questions">Tap to answer</string>
-    <string name="aware_activate_accessibility_title">Please enable AWARE</string>
+    <string name="aware_activate_accessibility_title">Please enable eWellness</string>
     <string name="aware_activate_accessibility">Tap here to activate accessibility service.</string>
     <string name="aware_activate_battery_optimize_ignore_title">Doze</string>
     <string name="aware_activate_battery_optimize_ignore">Tap and add to the ignore battery optimizations\' list.</string>

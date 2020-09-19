@@ -1,5 +1,6 @@
 package edu.ucla.cs.er.depressionstudy;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -27,13 +28,12 @@ import android.view.View;
 import android.view.Window;
 
 import com.aware.Aware;
+import com.aware.Applications;
 import com.aware.Aware_Preferences;
 import com.aware.ESM;
 import com.aware.providers.ESM_Provider;
 import com.aware.ui.PermissionsHandler;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,16 +168,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AppCenter.start(getApplication(), "272a2395-8aa0-4c7c-8f0e-8c394edf22cf",
+        AppCenter.start(getApplication(), "ff80713c-3956-4e3b-b3f1-7a8779a3ab4b",
                 Analytics.class, Crashes.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             //original study
-//            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/2326/m8Fy5lEoqFp1";
+            STUDY_URL = "http://ec2-54-227-184-103.compute-1.amazonaws.com:8080/index.php/1/4lph4num3ric";
+            //STUDY_URL = "http://localhost:8080/index.php/1/4lph4num3ric";
         } else {
-//            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/1534/BqnhriI8YsQg";
-            STUDY_URL = "https://api.awareframework.com/index.php/webservice/index/2326/m8Fy5lEoqFp1";
+            // TODO: USE HTTPS
+            STUDY_URL = "http://ec2-54-227-184-103.compute-1.amazonaws.com:8080/index.php/1/4lph4num3ric";
+            //STUDY_URL = "http://localhost:8080/index.php/1/4lph4num3ric";
         }
 
         setContentView(R.layout.activity_main);
@@ -228,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
             transaction_sec.commit();
         }
 //        initialFragment();
-        checkForUpdates();
         initializeAware();
 //        scheduleNotifications();
     }
@@ -371,20 +371,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 //        initialFragment();
-        checkForCrashes();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterManagers();
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterManagers();
-//        handler.removeCallbacks(runnable);
-        super.onDestroy();
+        initializeAware();
     }
 
     private void initializeAware() {
@@ -408,9 +395,13 @@ public class MainActivity extends AppCompatActivity {
             Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
             //Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
             Aware.startAWARE(this);
+            Aware.startKeyboard(this);
 
-            //Applications.isAccessibilityServiceActive(this);
             //Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
+
+            boolean isAccessibilityActive = Applications.isAccessibilityServiceActive(this);
+            System.out.println("Accessibility active:");
+            System.out.println(isAccessibilityActive);
 
             saveSubjectID();
         } else {
@@ -470,21 +461,6 @@ public class MainActivity extends AppCompatActivity {
         permissionsHandler.putExtra(PermissionsHandler.EXTRA_REDIRECT_ACTIVITY, getPackageName() + "/" + getClass().getName());
         permissionsHandler.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(permissionsHandler);
-    }
-
-    // HockeyApp integration
-
-    private void checkForCrashes() {
-        CrashManager.register(this);
-    }
-
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this);
-    }
-
-    private void unregisterManagers() {
-        UpdateManager.unregister();
     }
 
     public void checkFirstTime() {

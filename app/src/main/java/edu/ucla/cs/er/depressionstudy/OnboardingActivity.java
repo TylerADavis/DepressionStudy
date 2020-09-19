@@ -24,8 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import net.hockeyapp.android.utils.Util;
-
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 public class OnboardingActivity extends AppCompatActivity {
