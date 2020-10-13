@@ -102,7 +102,7 @@ public class OnboardingActivity extends AppCompatActivity {
         final int color4 = getResources().getColor(R.color.colorActivity);
         final int color5 = getResources().getColor(R.color.colorOnboarding);
 
-        final int[] colorList = new int[]{color1, color2, color3, color4, color5};
+        final int[] colorList = new int[]{color1, /*color2, color3, color4,*/ color5};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
@@ -111,7 +111,7 @@ public class OnboardingActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // color update
-                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 4 ? position : position + 1]);
+                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 1 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
             }
 
@@ -127,7 +127,7 @@ public class OnboardingActivity extends AppCompatActivity {
                         window.setStatusBarColor(color1);
                         relativeLayout2.setVisibility(View.GONE);
                         break;
-                    case 1:
+                    /*case 1:
                         mViewPager.setBackgroundColor(color2);
                         window.setStatusBarColor(color2);
                         relativeLayout2.setVisibility(View.GONE);
@@ -141,8 +141,8 @@ public class OnboardingActivity extends AppCompatActivity {
                         mViewPager.setBackgroundColor(color4);
                         window.setStatusBarColor(color4);
                         relativeLayout2.setVisibility(View.GONE);
-                        break;
-                    case 4:
+                        break;*/
+                    case 1:
                         mViewPager.setBackgroundColor(color5);
                         window.setStatusBarColor(color5);
                         relativeLayout2.setVisibility(View.VISIBLE);
@@ -150,8 +150,8 @@ public class OnboardingActivity extends AppCompatActivity {
                         break;
                 }
 
-                mNextBtn.setVisibility(position == 4 ? View.GONE : View.VISIBLE);
-                mFinishBtn.setVisibility(position == 4 ? View.VISIBLE : View.GONE);
+                mNextBtn.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
+                mFinishBtn.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
             }
 
             @Override
@@ -282,7 +282,7 @@ public class OnboardingActivity extends AppCompatActivity {
                     linearLayout3.setVisibility(View.GONE);
 
                     return rootView;
-                case 2:
+                /*case 2:
                     linearLayout1.setVisibility(View.VISIBLE);
                     relativeLayout.setVisibility(View.GONE);
                     linearLayout2.setVisibility(View.GONE);
@@ -302,8 +302,8 @@ public class OnboardingActivity extends AppCompatActivity {
                     linearLayout2.setVisibility(View.GONE);
                     linearLayout3.setVisibility(View.VISIBLE);
 
-                    return rootView;
-                case 5:
+                    return rootView;*/
+                case 2:
                     linearLayout1.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
                     linearLayout2.setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public class OnboardingActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 5 total pages.
-            return 5;
+            return 2;
         }
 
     }

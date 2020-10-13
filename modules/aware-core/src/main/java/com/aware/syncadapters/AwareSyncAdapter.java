@@ -154,7 +154,8 @@ public class AwareSyncAdapter extends AbstractThreadedSyncAdapter {
         if (Aware.DEBUG) Log.d(Aware.TAG, "Synching " + database_table + " to: " + web_server + " in batches of " + MAX_POST_SIZE);
 
         String device_id = Aware.getSetting(context, Aware_Preferences.DEVICE_ID);
-        boolean DEBUG = Aware.getSetting(context, Aware_Preferences.DEBUG_FLAG).equals("true");
+        //boolean DEBUG = Aware.getSetting(context, Aware_Preferences.DEBUG_FLAG).equals("true");
+        boolean DEBUG = Aware.DEBUG;
 
         String response = createRemoteTable(device_id, table_fields, web_service_simple, protocol, context, web_server, database_table);
         if (response != null || web_service_simple) {
@@ -598,10 +599,10 @@ public class AwareSyncAdapter extends AbstractThreadedSyncAdapter {
 
             //Something went wrong, e.g., server is down, lost internet, etc.
             if (success == null) {
-                if (DEBUG) Log.d(Aware.TAG, DATABASE_TABLE + " FAILED to sync. Server down?");
+                if (Aware.DEBUG) Log.d(Aware.TAG, DATABASE_TABLE + " FAILED to sync. Server down?");
                 return 0;
             } else {
-                if (DEBUG)
+                if (Aware.DEBUG)
                     Log.d(Aware.TAG, "Sync OK into " + DATABASE_TABLE + " [ " + rows.length() + " rows ]");
             }
         }

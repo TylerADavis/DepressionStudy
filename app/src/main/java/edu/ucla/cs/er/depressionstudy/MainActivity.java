@@ -47,23 +47,24 @@ import static android.app.Notification.DEFAULT_ALL;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
+import com.microsoft.appcenter.distribute.Distribute;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static String STUDY_URL;
     private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
-            android.Manifest.permission.CAMERA,
+            //android.Manifest.permission.CAMERA,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.ACCESS_WIFI_STATE,
-            android.Manifest.permission.BLUETOOTH,
-            android.Manifest.permission.BLUETOOTH_ADMIN,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.READ_PHONE_STATE,
-            android.Manifest.permission.READ_CONTACTS,
-            android.Manifest.permission.READ_CALL_LOG,
-            android.Manifest.permission.READ_SMS,
-            android.Manifest.permission.RECORD_AUDIO
+            android.Manifest.permission.ACCESS_WIFI_STATE
+            //android.Manifest.permission.BLUETOOTH,
+            //android.Manifest.permission.BLUETOOTH_ADMIN,
+            //android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            //android.Manifest.permission.ACCESS_FINE_LOCATION,
+            //android.Manifest.permission.READ_PHONE_STATE,
+            //android.Manifest.permission.READ_CONTACTS,
+            //android.Manifest.permission.READ_CALL_LOG,
+            //android.Manifest.permission.READ_SMS,
+            //android.Manifest.permission.RECORD_AUDIO
     ));
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -169,16 +170,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         AppCenter.start(getApplication(), "ff80713c-3956-4e3b-b3f1-7a8779a3ab4b",
-                Analytics.class, Crashes.class);
+                Analytics.class, Crashes.class, Distribute.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
-            //original study
-            STUDY_URL = "http://ec2-54-227-184-103.compute-1.amazonaws.com:8080/index.php/1/4lph4num3ric";
-            //STUDY_URL = "http://localhost:8080/index.php/1/4lph4num3ric";
+            STUDY_URL = "https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric";
         } else {
-            // TODO: USE HTTPS
-            STUDY_URL = "http://ec2-54-227-184-103.compute-1.amazonaws.com:8080/index.php/1/4lph4num3ric";
-            //STUDY_URL = "http://localhost:8080/index.php/1/4lph4num3ric";
+            STUDY_URL = "https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric";
         }
 
         setContentView(R.layout.activity_main);

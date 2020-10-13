@@ -389,6 +389,7 @@
                 android:resource="@xml/sync_wifi" />
         </service>
 
+        <!--
         <service
             android:name="com.aware.plugin.ambient_noise.syncadapters.Ambient_Noise_Sync"
             android:exported="true">
@@ -424,6 +425,7 @@
             </intent-filter>
             <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_google_fused_location" />
         </service>
+        -->
 
         <activity
             android:name=".LogoActivity"
@@ -444,7 +446,7 @@
         </activity>
 
 
-        <provider
+        <!--<provider
             android:name="com.aware.plugin.ambient_noise.Provider"
             android:authorities="${applicationId}.provider.ambient_noise"
             android:exported="true"
@@ -470,7 +472,7 @@
             android:authorities="${applicationId}.provider.geofences"
             android:exported="true"
             android:readPermission="com.aware.READ_CONTEXT_DATA"
-            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />-->
 
         <!--<provider
             android:name="com.aware.plugin.studentlife.audio_final.Provider"

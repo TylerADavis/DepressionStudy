@@ -130,13 +130,13 @@ public class Http {
             os.close();
 
             path_connection.connect();
-
+            //if (Aware.DEBUG) {
+                Log.d(TAG,"Request: POST, URL: " + url + "\nData:" + builder.build().getEncodedQuery());
+                Log.d(TAG, "Status: " + path_connection.getResponseCode() );
+                Log.e(TAG, path_connection.getResponseMessage() );
+            //}
             if( path_connection.getResponseCode() != HttpURLConnection.HTTP_OK ) {
-                if (Aware.DEBUG) {
-                    Log.d(TAG,"Request: POST, URL: " + url + "\nData:" + builder.build().getEncodedQuery());
-                    Log.d(TAG, "Status: " + path_connection.getResponseCode() );
-                    Log.e(TAG, path_connection.getResponseMessage() );
-                }
+
                 return null;
             }
 

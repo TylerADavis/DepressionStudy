@@ -50,7 +50,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 
         active = (CheckBoxPreference) findPreference(STATUS_PLUGIN_AMBIENT_NOISE);
         if (Aware.getSetting(getApplicationContext(), STATUS_PLUGIN_AMBIENT_NOISE).length() == 0) {
-            Aware.setSetting(getApplicationContext(), STATUS_PLUGIN_AMBIENT_NOISE, true);
+            Aware.setSetting(getApplicationContext(), STATUS_PLUGIN_AMBIENT_NOISE, false);
         }
         active.setChecked(Aware.getSetting(getApplicationContext(), STATUS_PLUGIN_AMBIENT_NOISE).equals("true"));
 
