@@ -564,7 +564,7 @@ public class SurveyFragment extends Fragment {
                     array.put(esmRadio14.build());
                     array.put(esmRadio15.build());
                     esmString = array.toString();
-                    Log.d("esmString", esmString);
+                    //Log.d("esmString", esmString);
 
                     //Queue them
 //                    ESM.queueESM(getContext(), factory.build());

@@ -375,15 +375,6 @@ public class MainActivity extends AppCompatActivity {
         if (hasRequiredPermissions()) {
             if (!Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).equals(STUDY_URL)) {
                 Aware.joinStudy(getApplicationContext(), STUDY_URL);
-
-                // This needs to happen after we have joined the study, so add some delay to make
-                // sure it happens after all the web requests are finished
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        saveSubjectID();
-                    }
-                }, 10000);
             }
 
             Intent aware = new Intent(this, Aware.class);
@@ -393,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
             //Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
             Aware.startAWARE(this);
             Aware.startKeyboard(this);
+            Aware.startESM(this);
 
             //Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
 
@@ -400,7 +392,15 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Accessibility active:");
             System.out.println(isAccessibilityActive);
 
-            saveSubjectID();
+            // This needs to happen after we have joined the study, so add some delay to make
+            // sure it happens after all the web requests are finished
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    saveSubjectID();
+                }
+            }, 10000);
+
         } else {
             requestPermissions();
         }
