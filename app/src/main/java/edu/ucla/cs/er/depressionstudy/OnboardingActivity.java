@@ -102,7 +102,7 @@ public class OnboardingActivity extends AppCompatActivity {
         final int color4 = getResources().getColor(R.color.colorActivity);
         final int color5 = getResources().getColor(R.color.colorOnboarding);
 
-        final int[] colorList = new int[]{color1, /*color2, color3, color4,*/ color5};
+        final int[] colorList = new int[]{color1, /*color2, color3,*/ color4, color5};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
@@ -111,7 +111,7 @@ public class OnboardingActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // color update
-                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 1 ? position : position + 1]);
+                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 2 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
             }
 
@@ -136,13 +136,13 @@ public class OnboardingActivity extends AppCompatActivity {
                         mViewPager.setBackgroundColor(color3);
                         window.setStatusBarColor(color3);
                         relativeLayout2.setVisibility(View.GONE);
-                        break;
-                    case 3:
+                        break;*/
+                    case 1:
                         mViewPager.setBackgroundColor(color4);
                         window.setStatusBarColor(color4);
                         relativeLayout2.setVisibility(View.GONE);
-                        break;*/
-                    case 1:
+                        break;
+                    case 2:
                         mViewPager.setBackgroundColor(color5);
                         window.setStatusBarColor(color5);
                         relativeLayout2.setVisibility(View.VISIBLE);
@@ -150,8 +150,8 @@ public class OnboardingActivity extends AppCompatActivity {
                         break;
                 }
 
-                mNextBtn.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
-                mFinishBtn.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                mNextBtn.setVisibility(position == 2 ? View.GONE : View.VISIBLE);
+                mFinishBtn.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
             }
 
             @Override
@@ -295,15 +295,15 @@ public class OnboardingActivity extends AppCompatActivity {
                     linearLayout2.setVisibility(View.VISIBLE);
                     linearLayout3.setVisibility(View.GONE);
 
-                    return rootView;
-                case 4:
+                    return rootView;*/
+                case 2:
                     linearLayout1.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
                     linearLayout2.setVisibility(View.GONE);
                     linearLayout3.setVisibility(View.VISIBLE);
 
-                    return rootView;*/
-                case 2:
+                    return rootView;
+                case 3:
                     linearLayout1.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
                     linearLayout2.setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public class OnboardingActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 5 total pages.
-            return 2;
+            return 3;
         }
 
     }

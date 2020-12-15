@@ -33,6 +33,7 @@ import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.aware.providers.Applications_Provider;
 import com.aware.providers.Applications_Provider.Applications_Crashes;
@@ -45,6 +46,7 @@ import com.aware.utils.Scheduler;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -268,18 +270,86 @@ public class Applications extends AccessibilityService {
             keyboard.put(Keyboard_Provider.Keyboard_Data.TIMESTAMP, System.currentTimeMillis());
             keyboard.put(Keyboard_Provider.Keyboard_Data.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
             keyboard.put(Keyboard_Provider.Keyboard_Data.PACKAGE_NAME, (String) event.getPackageName());
-            keyboard.put(Keyboard_Provider.Keyboard_Data.BEFORE_TEXT, (String) event.getBeforeText());
-            keyboard.put(Keyboard_Provider.Keyboard_Data.CURRENT_TEXT, event.getText().toString());
+
+            if (event.isPassword()) {
+                keyboard.put(Keyboard_Provider.Keyboard_Data.BEFORE_TEXT, "");
+                keyboard.put(Keyboard_Provider.Keyboard_Data.CURRENT_TEXT, "");
+            } else {
+                keyboard.put(Keyboard_Provider.Keyboard_Data.BEFORE_TEXT, (String) event.getBeforeText());
+                keyboard.put(Keyboard_Provider.Keyboard_Data.CURRENT_TEXT, event.getText().toString());
+            }
+
             keyboard.put(Keyboard_Provider.Keyboard_Data.IS_PASSWORD, event.isPassword());
+
+            String packageName = event.getPackageName().toString();
+            SupportedBrowserConfig browserConfig = null;
+            for (SupportedBrowserConfig supportedConfig: getSupportedBrowsers()) {
+                if (supportedConfig.packageName.equals(packageName)) {
+                    browserConfig = supportedConfig;
+                }
+            }
+
+            String capturedUrl = "";
+            AccessibilityNodeInfo parentNodeInfo = event.getSource();
+            if (browserConfig != null && parentNodeInfo != null) {
+                capturedUrl = captureUrl(parentNodeInfo, browserConfig);
+                parentNodeInfo.recycle();
+            }
 
             if (awareSensor != null) awareSensor.onKeyboard(keyboard);
 
             getContentResolver().insert(Keyboard_Provider.Keyboard_Data.CONTENT_URI, keyboard);
 
-            if (DEBUG) Log.d(TAG, "Keyboard: " + keyboard.toString());
+            if (true || DEBUG) Log.d(TAG, "Keyboard: " + keyboard.toString() + ", url: " + capturedUrl);
 
             Intent keyboard_data = new Intent(Keyboard.ACTION_AWARE_KEYBOARD);
             sendBroadcast(keyboard_data);
+        }
+    }
+
+    private String captureUrl(AccessibilityNodeInfo info, SupportedBrowserConfig config) {
+        while (true) {
+            AccessibilityNodeInfo parent = info.getParent();
+            if (parent==null) {
+                break;
+            }
+            info = parent;
+        }
+
+        List<AccessibilityNodeInfo> nodes = info.findAccessibilityNodeInfosByViewId(config.addressBarId);
+        if (nodes == null || nodes.size() <= 0) {
+            return null;
+        }
+
+        AccessibilityNodeInfo addressBarNodeInfo = nodes.get(0);
+        String url = null;
+        if (addressBarNodeInfo.getText() != null) {
+            url = addressBarNodeInfo.getText().toString();
+        }
+        addressBarNodeInfo.recycle();
+        return url;
+    }
+
+    private static List<SupportedBrowserConfig> getSupportedBrowsers() {
+        List<SupportedBrowserConfig> browsers = new ArrayList<>();
+        browsers.add( new SupportedBrowserConfig("com.android.chrome", "com.android.chrome:id/url_bar"));
+        browsers.add( new SupportedBrowserConfig("org.mozilla.firefox", "org.mozilla.firefox:id/url_bar_title"));
+        return browsers;
+    }
+
+    private static String[] packageNames() {
+        List<String> packageNames = new ArrayList<>();
+        for (SupportedBrowserConfig config: getSupportedBrowsers()) {
+            packageNames.add(config.packageName);
+        }
+        return packageNames.toArray(new String[0]);
+    }
+
+    private static class SupportedBrowserConfig {
+        public String packageName, addressBarId;
+        public SupportedBrowserConfig(String packageName, String addressBarId) {
+            this.packageName = packageName;
+            this.addressBarId = addressBarId;
         }
     }
 

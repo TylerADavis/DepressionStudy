@@ -3,8 +3,9 @@
     android:description="@string/aware_description"
     android:settingsActivity="edu.ucla.cs.er.depressionstudy.MainActivity"
     android:accessibilityEventTypes="typeAllMask"
-    android:accessibilityFeedbackType="feedbackGeneric"
-    android:accessibilityFlags="flagDefault"
+    android:accessibilityFeedbackType="feedbackGeneric|feedbackVisual"
+    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews|flagRequestTouchExplorationMode|flagRequestEnhancedWebAccessibility|flagReportViewIds|flagRetrieveInteractiveWindows"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
+    android:canRequestFilterKeyEvents="true"
 />

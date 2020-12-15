@@ -55,11 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
             //android.Manifest.permission.CAMERA,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.ACCESS_WIFI_STATE
+            android.Manifest.permission.ACCESS_WIFI_STATE,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
             //android.Manifest.permission.BLUETOOTH,
             //android.Manifest.permission.BLUETOOTH_ADMIN,
-            //android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            //android.Manifest.permission.ACCESS_FINE_LOCATION,
             //android.Manifest.permission.READ_PHONE_STATE,
             //android.Manifest.permission.READ_CONTACTS,
             //android.Manifest.permission.READ_CALL_LOG,
