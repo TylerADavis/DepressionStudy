@@ -84,7 +84,7 @@ android {
     productFlavors {
     }
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        //coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -120,6 +120,8 @@ dependencies {
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
-    implementation 'com.github.kizitonwose:CalendarView:1.0.0'
+    //coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    //implementation 'com.github.kizitonwose:CalendarView:1.0.0'
+    implementation 'com.github.prolificinteractive:material-calendarview:1.4.3'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

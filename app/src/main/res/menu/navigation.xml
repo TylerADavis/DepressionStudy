@@ -7,6 +7,11 @@
         android:title="@string/title_about" />
 
     <item
+        android:id="@+id/navigation_calendar"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_calendar" />
+
+    <item
         android:id="@+id/navigation_questionnaires"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_questionnaires" />

@@ -5,6 +5,7 @@
     <string name="title_questionnaires">Questionnaires</string>
     <string name="title_contactus">Contact Us</string>
     <string name="title_about">About</string>
+    <string name="title_calendar">Calendar</string>
     <string name="title_exit">Exit</string>
     <string name="title_info">Information</string>
     <string name="title_survey">Assessment</string>
@@ -38,7 +39,7 @@
     <string name="survey">Instruction: Please select one of the following surveys you have been instructed to complete. Only complete one survey per day. </string>
     <string name="survey_done">You have already taken the daily survey today. You can change your answers by taking the survey again.</string>
     <string name="welcome">Welcome to eWellness app. This app will monitor your smartphone activity</string>
-// VA text!
+    // VA text!
     <!--
     <string name="consent_title">DEPARTMENT OF VETERAN AFFAIRS\nGREATER LOS ANGELES \nSTUDY INFORMATION INTRODUCTION</string>
     <string name="consent_subtitle">Pilot Study of Mobile Sensing Data to Evaluate Mental Health Status</string>
@@ -104,7 +105,7 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
         and act on your behalf, but instead reach out to an appropriate caregiver. We’ve included a
         ‘Need Help?’ tab in the menu with contact info for a variety of clinical and community resources that are also
         available to you.</string>
-    
+
     <string name="collect_title">Data Collection Permission</string>
     <string name="collect_p1">In the next few steps, we will walk you through the permissions to enable the app to work properly.
         </string>
@@ -124,7 +125,7 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
     <string name="help_content2">If you are a Veteran in crisis — or you’re concerned about one — free, confidential support is available 24/7. Call the Veterans Crisis Line at 1-800-273-8255 and Press 1, send a text message to 838255, or chat online at: https://www.veteranscrisisline.net/get-help/chat.</string>
     <string name="help_content3"></string>
     <string name="help_content4"></string> -->
-//UCLA Specific Language
+    //UCLA Specific Language
     <string name="help_content2"> For emergency assistance:
     \n\nUC Police Department (UCPD)
     Call 9-1-1 or (310) 825-1491
@@ -148,7 +149,7 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
     <string name="title_activity_onboarding">OnboardingActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-//UCLA Pilot Specific Text
+    //UCLA Pilot Specific Text
     <string name="consent_title">UNIVERSITY OF CALIFORNIA \nLOS ANGELES (UCLA) \nSTUDY INFORMATION SHEET</string>
     <string name="consent_subtitle">Passive Sensing of Mental Wellness</string>
     <string name="consent_subtitle_p0">Dr. Majid Sarrafzadeh, from the Computer Science Department at the University of California, Los Angeles (UCLA) is conducting a research study.
@@ -199,5 +200,6 @@ how useful it is in detecting mental health problems. /nYou are being asked to p
         </string>
     <string name="consent_t11">By selecting this you acknowledge that you have received and understood the terms of the study. By proceeding to study enrollment you are agreeing to participate in the study.
         </string>
-    
+
+
 </resources>

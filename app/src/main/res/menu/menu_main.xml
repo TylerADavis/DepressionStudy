@@ -7,6 +7,11 @@
         app:showAsAction="never"
         android:title="@string/title_status" />
     <item
+        android:id="@+id/calendar"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/title_calendar" />
+    <item
         android:id="@+id/survey"
         android:orderInCategory="100"
         android:title="@string/title_survey"

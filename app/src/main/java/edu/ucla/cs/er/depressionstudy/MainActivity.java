@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private Bundle bundle;
     private Window window;
     private StatusFragment status;
+    private CalendarFragment calendar;
 
     private static int SPLASH_TIME_OUT = 1000;
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
@@ -110,6 +111,19 @@ public class MainActivity extends AppCompatActivity {
                     window.setStatusBarColor(getResources().getColor(R.color.colorStatus));
                     return true;
 
+                case R.id.navigation_calendar:
+                    if (findViewById(R.id.fragment_container) != null) {
+                        calendar = new CalendarFragment();
+                        calendar.setArguments(getIntent().getExtras());
+                        transaction.replace(R.id.fragment_container, calendar);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                    mActivityTitle = getResources().getString(R.string.title_calendar);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
+                    window.setStatusBarColor(getResources().getColor(R.color.colorContact));
+                    return true;
 
                 case R.id.navigation_questionnaires:
                     if (findViewById(R.id.fragment_container) != null) {
@@ -340,6 +354,15 @@ public class MainActivity extends AppCompatActivity {
                     status = new StatusFragment();
                     status.setArguments(getIntent().getExtras());
                     transaction.replace(R.id.fragment_container, status);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
+            case R.id.calendar:
+                if (findViewById(R.id.fragment_container) != null) {
+                    calendar = new CalendarFragment();
+                    calendar.setArguments(getIntent().getExtras());
+                    transaction.replace(R.id.fragment_container, calendar);
                     transaction.addToBackStack(null);
                     transaction.commit();
                 }

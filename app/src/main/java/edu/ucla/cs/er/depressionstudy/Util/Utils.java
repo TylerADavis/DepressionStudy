@@ -6,6 +6,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 
+import com.google.gson.Gson;
+
 public class Utils {
     private static final String PREFERENCES_FILE = "materialsample_settings";
 
@@ -27,5 +29,23 @@ public class Utils {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(settingName, settingValue);
         editor.apply();
+    }
+
+    public static void saveSharedSettingObj(Context ctx, String settingName, Object settingValue) {
+        Gson gson = new Gson();
+        String json = gson.toJson(settingValue);
+        saveSharedSetting(ctx, settingName, json);
+    }
+
+    public static <T> T readSharedSettingObj(Context ctx, String settingName, T defaultValue, Class<T> classOfT) {
+        String json = readSharedSetting(ctx, settingName, null);
+        if (json==null) {
+            return defaultValue;
+        }
+
+        Gson gson = new Gson();
+        T obj = gson.fromJson(json, classOfT);
+
+        return obj;
     }
 }
