@@ -11,15 +11,12 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
-import com.aware.BuildConfig;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -124,7 +121,7 @@ public class Locations_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 
@@ -161,8 +158,7 @@ public class Locations_Provider extends ContentProvider {
                 if (location_id > 0) {
                     Uri locationUri = ContentUris.withAppendedId(
                             Locations_Data.CONTENT_URI, location_id);
-                    getContext().getContentResolver().notifyChange(locationUri,
-                            null);
+                    getContext().getContentResolver().notifyChange(locationUri, null, false);
                     return locationUri;
                 }
                 database.endTransaction();
@@ -224,7 +220,7 @@ public class Locations_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case LOCATIONS:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -272,7 +268,7 @@ public class Locations_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }

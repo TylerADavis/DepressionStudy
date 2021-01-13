@@ -2,6 +2,7 @@ package com.aware;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SyncRequest;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -33,14 +34,12 @@ public class Keyboard extends Aware_Sensor {
     public void onDestroy() {
         super.onDestroy();
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Keyboard_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Keyboard_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Keyboard_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Keyboard_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Keyboard_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
     }
 
     @Override
@@ -53,15 +52,15 @@ public class Keyboard extends Aware_Sensor {
 
             if (Aware.DEBUG) Log.d(TAG, "Keyboard service active...");
 
-            if (!Aware.isSyncEnabled(this, Keyboard_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Keyboard_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Keyboard_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Keyboard_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Keyboard_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 

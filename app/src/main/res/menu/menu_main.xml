@@ -5,11 +5,13 @@
         android:id="@+id/status"
         android:orderInCategory="100"
         app:showAsAction="never"
+        android:visible="false"
         android:title="@string/title_status" />
     <item
         android:id="@+id/calendar"
         android:orderInCategory="100"
         app:showAsAction="never"
+        android:visible="false"
         android:title="@string/title_calendar" />
     <item
         android:id="@+id/survey"

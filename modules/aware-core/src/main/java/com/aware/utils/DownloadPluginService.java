@@ -7,20 +7,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
-
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.R;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,9 +33,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Random;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Created by denzil on 17/01/15.
@@ -96,15 +93,16 @@ public class DownloadPluginService extends IntentService {
 
                 String package_url = study_host + json_package.getString("package_path") + json_package.getString("package_name");
 
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), Aware.AWARE_NOTIFICATION_CHANNEL_DATASYNC);
                 mBuilder.setSmallIcon(R.drawable.ic_action_aware_plugins);
                 mBuilder.setContentTitle("AWARE Plugin");
                 mBuilder.setContentText(((is_update) ? "Updating " : "Downloading ") + json_package.getString("title"));
                 mBuilder.setProgress(0, 0, true);
                 mBuilder.setAutoCancel(true);
+                mBuilder = Aware.setNotificationProperties(mBuilder, Aware.AWARE_NOTIFICATION_IMPORTANCE_DATASYNC);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_ID);
+                    mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_CHANNEL_DATASYNC);
 
                 final int notID = new Random(System.currentTimeMillis()).nextInt();
                 notManager.notify(notID, mBuilder.build());
@@ -127,6 +125,8 @@ public class DownloadPluginService extends IntentService {
                     //Fix for known-bug on <= JellyBean (4.x)
                     System.setProperty("http.keepAlive", "false");
 
+                    Ion.getDefault(getApplicationContext()).getConscryptMiddleware().enable(false);
+
                     Ion.getDefault(getApplicationContext())
                             .getHttpClient()
                             .getSSLSocketMiddleware().setTrustManagers(trustManagerFactory.getTrustManagers());
@@ -135,6 +135,7 @@ public class DownloadPluginService extends IntentService {
                             .getSSLSocketMiddleware().setSSLContext(sslContext);
                 }
 
+                Ion.getDefault(getApplicationContext()).getConscryptMiddleware().enable(false);
                 Ion.with(getApplicationContext()).load(package_url).noCache()
                         .write(new File(Environment.getExternalStoragePublicDirectory("AWARE/plugins/" + json_package.getString("package_name")).toString()))
                         .setCallback(new FutureCallback<File>() {

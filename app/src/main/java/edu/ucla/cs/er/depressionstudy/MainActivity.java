@@ -10,22 +10,31 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.PermissionChecker;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.os.PowerManager;
+import android.provider.Settings;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.PermissionChecker;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.aware.Aware;
 import com.aware.Applications;
@@ -44,6 +53,7 @@ import edu.ucla.cs.er.depressionstudy.Util.Utils;
 import static android.app.Notification.DEFAULT_ALL;
 
 //New for aware
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -52,12 +62,13 @@ import com.microsoft.appcenter.distribute.Distribute;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static String STUDY_URL;
-    private static final ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
+    private ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
             //android.Manifest.permission.CAMERA,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.ACCESS_WIFI_STATE,
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
             //android.Manifest.permission.BLUETOOTH,
             //android.Manifest.permission.BLUETOOTH_ADMIN,
             //android.Manifest.permission.READ_PHONE_STATE,
@@ -73,118 +84,23 @@ public class MainActivity extends AppCompatActivity {
     private AboutFragment about;
     private ContactFragment contact;
     private SurveyFragment survey;
-    private LogoFragment logo;
-    private Bundle bundle;
-    private Window window;
     private StatusFragment status;
     private CalendarFragment calendar;
 
-    private static int SPLASH_TIME_OUT = 1000;
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
     boolean isUserFirstTime;
-    private Handler handler;
-    private Runnable runnable;
-    FragmentTransaction transaction_init = getSupportFragmentManager().beginTransaction();
     FragmentTransaction transaction_sec = getSupportFragmentManager().beginTransaction();
-
-    private AlarmManager alarmMgr;
-    private PendingIntent notificationIntent;
-
-    private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new NavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            switch (item.getItemId()) {
-                case R.id.navigation_status_new:
-                    if (findViewById(R.id.fragment_container) != null) {
-                        status = new StatusFragment();
-                        status.setArguments(getIntent().getExtras());
-                        transaction.replace(R.id.fragment_container, status);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                    mActivityTitle = getResources().getString(R.string.title_status);
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorStatus)));
-                    window.setStatusBarColor(getResources().getColor(R.color.colorStatus));
-                    return true;
-
-                case R.id.navigation_calendar:
-                    if (findViewById(R.id.fragment_container) != null) {
-                        calendar = new CalendarFragment();
-                        calendar.setArguments(getIntent().getExtras());
-                        transaction.replace(R.id.fragment_container, calendar);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                    mActivityTitle = getResources().getString(R.string.title_calendar);
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
-                    window.setStatusBarColor(getResources().getColor(R.color.colorContact));
-                    return true;
-
-                case R.id.navigation_questionnaires:
-                    if (findViewById(R.id.fragment_container) != null) {
-                        survey = new SurveyFragment();
-                        survey.setArguments(getIntent().getExtras());
-                        transaction.replace(R.id.fragment_container, survey);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                    mActivityTitle = getResources().getString(R.string.title_questionnaires);
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorSurvey)));
-                    window.setStatusBarColor(getResources().getColor(R.color.colorSurvey));
-                    return true;
-
-                case R.id.navigation_contactus:
-                    if (findViewById(R.id.fragment_container) != null) {
-                        contact = new ContactFragment();
-                        contact.setArguments(getIntent().getExtras());
-                        transaction.replace(R.id.fragment_container, contact);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                    mActivityTitle = getResources().getString(R.string.title_contactus);
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorContact)));
-                    window.setStatusBarColor(getResources().getColor(R.color.colorContact));
-                    return true;
-
-                case R.id.navigation_about:
-                    // Check that the activity is using the layout version with
-                    // the fragment_container FrameLayout
-                    if (findViewById(R.id.fragment_container) != null) {
-                        // Create a new Fragment to be placed in the activity layout
-                        about = new AboutFragment();
-
-                        // In case this activity was started with special instructions from an
-                        // Intent, pass the Intent's extras to the fragment as arguments
-                        about.setArguments(getIntent().getExtras());
-
-                        // Add the fragment to the 'fragment_container' FrameLayout
-                        transaction.replace(R.id.fragment_container, about);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                    mActivityTitle = getResources().getString(R.string.title_about);
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAbout)));
-                    window.setStatusBarColor(getResources().getColor(R.color.colorAbout));
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            REQUIRED_PERMISSIONS.add(Manifest.permission.FOREGROUND_SERVICE);
+        }
+
         AppCenter.start(getApplication(), "ff80713c-3956-4e3b-b3f1-7a8779a3ab4b",
-                Analytics.class, Crashes.class, Distribute.class);
+                /*Analytics.class, Crashes.class, */Distribute.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             STUDY_URL = "https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric";
@@ -194,23 +110,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        checkFirstTime();
-
-        window = this.getWindow();
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
+        //checkFirstTime();
 
         mActivityTitle = getTitle().toString();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            /** Called when a drawer has settled in a completely open state. */
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-//                getSupportActionBar().setTitle("Navigation");
-//                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-//            }
-//
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
@@ -220,17 +125,6 @@ public class MainActivity extends AppCompatActivity {
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
-//        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-// Here's where we set the initial homepage. I've set it to be the status screen.
-//        if (findViewById(R.id.fragment_container) != null) {
-//            survey = new SurveyFragment();
-//            survey.setArguments(getIntent().getExtras());
-//            transaction_sec.replace(R.id.fragment_container, survey);
-//            transaction_sec.addToBackStack(null);
-//            transaction_sec.commit();
-//        }
 
         if (findViewById(R.id.fragment_container) != null) {
             status = new StatusFragment();
@@ -239,49 +133,59 @@ public class MainActivity extends AppCompatActivity {
             transaction_sec.addToBackStack(null);
             transaction_sec.commit();
         }
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                switch (tab.getPosition()) {
+                    case 0:
+                        if (findViewById(R.id.fragment_container) != null) {
+                            status = new StatusFragment();
+                            status.setArguments(getIntent().getExtras());
+                            transaction.replace(R.id.fragment_container, status);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                        return;
+                    case 1:
+                        if (findViewById(R.id.fragment_container) != null) {
+                            if (survey == null) {
+                                survey = new SurveyFragment();
+                            }
+
+                            survey.setArguments(getIntent().getExtras());
+                            transaction.replace(R.id.fragment_container, survey);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                        return;
+                    /*case 1:
+                        if (findViewById(R.id.fragment_container) != null) {
+                            if (calendar == null) {
+                                calendar = new CalendarFragment();
+                            }
+
+                            calendar.setArguments(getIntent().getExtras());
+                            transaction.replace(R.id.fragment_container, calendar);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                        return;*/
+                }
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 //        initialFragment();
-        initializeAware();
+        //initializeAware();
 //        scheduleNotifications();
     }
-
-    //to schedule notification
- /*   private void scheduleNotifications() {
-        System.out.println("Scheduling notifications..");
-
-        Context context = getApplicationContext();
-
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setCategory(Notification.CATEGORY_REMINDER);
-        builder.setContentTitle("eWellness Reminder");
-        builder.setContentText("Please fill your daily survey");
-        builder.setSmallIcon(R.drawable.ic_launcher);
-        builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-        builder.setDefaults(DEFAULT_ALL);
-        builder.setPriority(Notification.PRIORITY_HIGH);
-        builder.setTicker("Please fill your daily survey");
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.setContentIntent(contentIntent);
-        Notification notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationReceiver.class);
-        intent.putExtra(NotificationReceiver.NOTIFICATION_ID, 42);
-        intent.putExtra(NotificationReceiver.NOTIFICATION, notification);
-        notificationIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        // Set the alarm to start at 9:00 a.m.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-
-        // Repeat daily
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, notificationIntent);
-
-        System.out.println("Scheduled notifications");
-    }*/
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -395,19 +299,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeAware() {
-        if (hasRequiredPermissions()) {
-            if (!Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).equals(STUDY_URL)) {
-                Aware.joinStudy(getApplicationContext(), STUDY_URL);
-            }
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        } else if (!hasRequiredPermissions()) {
+            requestPermissions();
+        } else {
 
-            Intent aware = new Intent(this, Aware.class);
-            startService(aware);
+//            if (!Aware.getSetting(getApplicationContext(), Aware_Preferences.WEBSERVICE_SERVER).equals(STUDY_URL)) {
+            //Aware.joinStudy(getApplicationContext(), STUDY_URL);
+//            }
 
-            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
-            //Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
-            Aware.startAWARE(this);
-            Aware.startKeyboard(this);
-            Aware.startESM(this);
+            //Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "false");
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.DEBUG_FLAG, "true");
+            //Aware.startAWARE(this);
+            //Aware.startKeyboard(this);
+            //Aware.startLocations(this);
+            //Aware.startESM(this);
 
             //Aware.isBatteryOptimizationIgnored(getApplicationContext(), getPackageName());
 
@@ -424,8 +335,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 10000);
 
-        } else {
-            requestPermissions();
+            subscribeToNotifications();
+
+
+            Intent aware = new Intent(this, Aware.class);
+            startService(aware);
+            Aware.joinStudy(getApplicationContext(), STUDY_URL);
+
+            //Aware.isBatteryOptimizationIgnored(this, getApplicationContext().getPackageName());
         }
     }
 
@@ -434,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
         if (!subjectID.equals("0")) {
             System.out.println("Saving subject id");
             System.out.println(subjectID);
-            Aware.setSetting(getApplicationContext(), Aware_Preferences.STATUS_ESM, true);
+            //Aware.setSetting(getApplicationContext(), Aware_Preferences.STATUS_ESM, true);
 
             Context context = getApplicationContext();
 
@@ -450,19 +367,6 @@ public class MainActivity extends AppCompatActivity {
 
             context.getContentResolver().insert(ESM_Provider.ESM_Data.CONTENT_URI, rowData);
         }
-    }
-
-    private void requestESM() {
-        //Make sure ESMs are active within the framework
-        Aware.setSetting(getApplicationContext(), Aware_Preferences.STATUS_ESM, true);
-
-        //Define the ESM to be displayed
-        String esmString = "[{'esm':{'esm_type':"+ ESM.TYPE_ESM_TEXT+",'esm_title':'ESM Freetext','esm_instructions':'The user can answer an open ended question.','esm_submit':'Next','esm_expiration_threshold':60,'esm_trigger':'AWARE Tester'}}]";
-
-        //Queue the ESM to be displayed when possible
-        Intent esm = new Intent(ESM.ACTION_AWARE_QUEUE_ESM);
-        esm.putExtra(ESM.EXTRA_ESM, esmString);
-        sendBroadcast(esm);
     }
 
     private boolean hasRequiredPermissions() {
@@ -496,46 +400,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void initialFragment() {
-
-        // Hide Action bar
-//        getSupportActionBar().hide();
-
-        // LogoFragment first
-        if (findViewById(R.id.fragment_container) != null) {
-            logo = new LogoFragment();
-            logo.setArguments(getIntent().getExtras());
-            transaction_init.replace(R.id.fragment_container, logo);
-            transaction_init.addToBackStack(null);
-            transaction_init.commit();
-        }
-
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-//                transaction_init.remove(logo).commit();
-
-                // Initial Fragment
-//                getSupportActionBar().show();
-//                if (findViewById(R.id.fragment_container) != null) {
-//                    survey = new SurveyFragment();
-//                    survey.setArguments(getIntent().getExtras());
-//                    transaction_sec.replace(R.id.fragment_container, survey);
-//                    transaction_sec.addToBackStack(null);
-//                    transaction_sec.commit();
-//                }
-                if (findViewById(R.id.fragment_container) != null) {
-                    status = new StatusFragment();
-                    status.setArguments(getIntent().getExtras());
-                    transaction_sec.replace(R.id.fragment_container, status);
-                    transaction_sec.addToBackStack(null);
-                    transaction_sec.commit();
+    public void subscribeToNotifications() {
+        String device_id = Aware.getSetting(this, Aware_Preferences.DEVICE_ID);
+        FirebaseMessaging.getInstance().subscribeToTopic(device_id)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    String msg = "Subscribed to notifications " + device_id;
+                    if (!task.isSuccessful()) {
+                        msg = "Failed to subscribe to notifications " + device_id;
+                    }
+                    Log.d(TAG, msg);
                 }
-            }
-        };
-
-        handler.postDelayed(runnable, SPLASH_TIME_OUT);
-
+            });
     }
 }

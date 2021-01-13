@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SyncRequest;
 import android.database.SQLException;
 import net.sqlcipher.database.SQLiteException;
 import android.location.GpsStatus;
@@ -197,12 +198,15 @@ public class Locations extends Aware_Sensor implements LocationListener {
     }
 
     private static Locations.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Locations.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Locations.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
+
     public interface AWARESensorObserver {
         void onLocationChanged(ContentValues data);
     }
@@ -281,14 +285,12 @@ public class Locations extends Aware_Sensor implements LocationListener {
         if (PERMISSIONS_OK) locationManager.removeUpdates(this);
         locationManager.removeGpsStatusListener(gps_status_listener);
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Locations_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Locations_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Locations_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Locations_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Locations_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         if (Aware.DEBUG) Log.d(TAG, "Locations service terminated...");
     }
@@ -408,15 +410,15 @@ public class Locations extends Aware_Sensor implements LocationListener {
                 }
             }
 
-            if (!Aware.isSyncEnabled(this, Locations_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Locations_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Locations_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Locations_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Locations_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 

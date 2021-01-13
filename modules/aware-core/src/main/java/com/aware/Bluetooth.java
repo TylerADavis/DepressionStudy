@@ -13,12 +13,7 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -27,9 +22,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
+import androidx.core.app.NotificationCompat;
 import com.aware.providers.Bluetooth_Provider;
 import com.aware.providers.Bluetooth_Provider.Bluetooth_Data;
 import com.aware.providers.Bluetooth_Provider.Bluetooth_Sensor;
@@ -97,7 +91,7 @@ public class Bluetooth extends Aware_Sensor {
 
     private boolean BLE_SUPPORT = false;
 
-    private Handler mBLEHandler;
+    private static Handler mBLEHandler;
 
     private ScanSettings scanSettings;
     private boolean isBLEScanning = false;
@@ -154,20 +148,28 @@ public class Bluetooth extends Aware_Sensor {
     }
 
     private static Bluetooth.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Bluetooth.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Bluetooth.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
 
     public interface AWARESensorObserver {
         void onBluetoothDetected(ContentValues data);
+
         void onBluetoothBLEDetected(ContentValues data);
+
         void onScanStarted();
+
         void onScanEnded();
+
         void onBLEScanStarted();
+
         void onBLEScanEnded();
+
         void onBluetoothDisabled();
     }
 
@@ -178,6 +180,7 @@ public class Bluetooth extends Aware_Sensor {
         if (PERMISSIONS_OK) {
             if (intent != null && intent.hasExtra("action") && intent.getStringExtra("action").equalsIgnoreCase(ACTION_AWARE_ENABLE_BT)) {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                enableBT.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(enableBT);
             }
 
@@ -217,21 +220,19 @@ public class Bluetooth extends Aware_Sensor {
                     if (scanSettings == null) {
                         scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
                     }
-
-                    if (!isBLEScanning)
-                        mBLEHandler.post(scanRunnable);
                 }
             }
 
-            if (!Aware.isSyncEnabled(this, Bluetooth_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Bluetooth_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Bluetooth_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Bluetooth_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Bluetooth_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 
@@ -242,25 +243,31 @@ public class Bluetooth extends Aware_Sensor {
         @Override
         public void run() {
             BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-            if (isBLEScanning) {
-                scanner.stopScan(scanCallback);
-                if (awareSensor != null) awareSensor.onBLEScanEnded();
-                if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_BLUETOOTH_BLE_SCAN_ENDED);
-                Intent scanEnd = new Intent(ACTION_AWARE_BLUETOOTH_BLE_SCAN_ENDED);
-                sendBroadcast(scanEnd);
-
-                discoveredBLE.clear();
-
-            } else {
+            if (scanner != null && !isBLEScanning) {
+                mBLEHandler.postDelayed(stopScan, 3000);
                 scanner.startScan(null, scanSettings, scanCallback);
                 if (awareSensor != null) awareSensor.onBLEScanStarted();
                 if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_BLUETOOTH_BLE_SCAN_STARTED);
                 Intent scanStart = new Intent(ACTION_AWARE_BLUETOOTH_BLE_SCAN_STARTED);
                 sendBroadcast(scanStart);
+                isBLEScanning = !isBLEScanning;
             }
+        }
+    };
 
-            isBLEScanning = !isBLEScanning;
-            mBLEHandler.postDelayed(this, Integer.parseInt(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_BLUETOOTH)) / 2 * 1000);
+    private Runnable stopScan = new Runnable() {
+        @Override
+        public void run() {
+            BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+            if (scanner != null && isBLEScanning) {
+                scanner.stopScan(scanCallback);
+                if (awareSensor != null) awareSensor.onBLEScanEnded();
+                if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_BLUETOOTH_BLE_SCAN_ENDED);
+                Intent scanEnd = new Intent(ACTION_AWARE_BLUETOOTH_BLE_SCAN_ENDED);
+                sendBroadcast(scanEnd);
+                discoveredBLE.clear();
+                isBLEScanning = !isBLEScanning;
+            }
         }
     };
 
@@ -310,22 +317,26 @@ public class Bluetooth extends Aware_Sensor {
         if (bluetoothAdapter != null) {
 
             bluetoothAdapter.cancelDiscovery();
-            bluetoothAdapter.getBluetoothLeScanner().stopScan(scanCallback);
+            if (BLE_SUPPORT) {
+                bluetoothAdapter.getBluetoothLeScanner().stopScan(scanCallback);
+            }
 
-            mBLEHandler.removeCallbacks(scanRunnable);
-            mBLEHandler.removeCallbacksAndMessages(null);
+            if (mBLEHandler != null) {
+                mBLEHandler.removeCallbacks(scanRunnable);
+                mBLEHandler.removeCallbacksAndMessages(null);
+            }
 
             alarmManager.cancel(bluetoothScan);
             notificationManager.cancel(123);
 
-            if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Bluetooth_Provider.getAuthority(this))) {
-                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Bluetooth_Provider.getAuthority(this), false);
-                ContentResolver.removePeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Bluetooth_Provider.getAuthority(this),
-                        Bundle.EMPTY
-                );
-            }
+
+            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Bluetooth_Provider.getAuthority(this), false);
+            ContentResolver.removePeriodicSync(
+                    Aware.getAWAREAccount(this),
+                    Bluetooth_Provider.getAuthority(this),
+                    Bundle.EMPTY
+            );
+
         }
 
         if (Aware.DEBUG) Log.d(TAG, "Bluetooth service terminated...");
@@ -394,6 +405,10 @@ public class Bluetooth extends Aware_Sensor {
                 if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_BLUETOOTH_SCAN_ENDED);
                 Intent scanEnd = new Intent(ACTION_AWARE_BLUETOOTH_SCAN_ENDED);
                 context.sendBroadcast(scanEnd);
+
+                // Start BLE scanning when normal BT scanning is finished
+                if (mBLEHandler == null) mBLEHandler = new Handler();
+                mBLEHandler.post(scanRunnable);
             }
 
             if (intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
@@ -447,6 +462,7 @@ public class Bluetooth extends Aware_Sensor {
     }
 
     private final Bluetooth_Broadcaster bluetoothMonitor = new Bluetooth_Broadcaster();
+
     private void save_bluetooth_device(BluetoothAdapter btAdapter) {
         if (btAdapter == null) return;
 
@@ -468,7 +484,7 @@ public class Bluetooth extends Aware_Sensor {
     private static void notifyMissingBluetooth(Context c, boolean dismiss) {
         if (!dismiss) {
             //Remind the user that we need Bluetooth on for data collection
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(c)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(c, Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL)
                     .setSmallIcon(R.drawable.ic_stat_aware_accessibility)
                     .setContentTitle("AWARE: Bluetooth needed")
                     .setContentText("Tap to enable Bluetooth for nearby scanning.")
@@ -477,8 +493,10 @@ public class Bluetooth extends Aware_Sensor {
                     .setAutoCancel(true)
                     .setContentIntent(PendingIntent.getService(c, 123, enableBT, PendingIntent.FLAG_UPDATE_CURRENT));
 
+            builder = Aware.setNotificationProperties(builder, Aware.AWARE_NOTIFICATION_IMPORTANCE_GENERAL);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                builder.setChannelId(Aware.AWARE_NOTIFICATION_ID);
+                builder.setChannelId(Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL);
 
             try {
                 notificationManager.notify(123, builder.build());

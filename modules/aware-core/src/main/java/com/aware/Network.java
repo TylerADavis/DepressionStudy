@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SyncRequest;
 import android.database.SQLException;
 import net.sqlcipher.database.SQLiteException;
 import android.location.LocationManager;
@@ -157,26 +158,42 @@ public class Network extends Aware_Sensor {
     private static TelephonyManager teleManager = null; //tracks phone network availability
 
     private static Network.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Network.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Network.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
+
     public interface AWARESensorObserver {
         void onInternetON();
+
         void onInternetOFF();
+
         void onGPSON();
+
         void onGPSOFF();
+
         void onBluetoothON();
+
         void onBluetoothOFF();
+
         void onWimaxON();
+
         void onWimaxOFF();
+
         void onNetworkDataON();
+
         void onNetworkDataOFF();
+
         void onWiFiON();
+
         void onWiFiOFF();
+
         void onAirplaneON();
+
         void onAirplaneOFF();
     }
 
@@ -192,7 +209,7 @@ public class Network extends Aware_Sensor {
                 try {
                     getContentResolver().insert(Network_Data.CONTENT_URI, mobile);
 
-                    if (awareSensor!= null) awareSensor.onNetworkDataOFF();
+                    if (awareSensor != null) awareSensor.onNetworkDataOFF();
 
                 } catch (SQLiteException e) {
                     if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -213,7 +230,7 @@ public class Network extends Aware_Sensor {
                 try {
                     getContentResolver().insert(Network_Data.CONTENT_URI, mobile);
 
-                    if (awareSensor!= null) awareSensor.onNetworkDataON();
+                    if (awareSensor != null) awareSensor.onNetworkDataON();
 
                 } catch (SQLiteException e) {
                     if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -251,7 +268,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, started);
 
-                        if (awareSensor!= null) awareSensor.onGPSON();
+                        if (awareSensor != null) awareSensor.onGPSON();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -272,7 +289,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, stopped);
 
-                        if (awareSensor!= null) awareSensor.onGPSOFF();
+                        if (awareSensor != null) awareSensor.onGPSOFF();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -300,7 +317,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, rowData);
 
-                        if (awareSensor!= null) awareSensor.onAirplaneON();
+                        if (awareSensor != null) awareSensor.onAirplaneON();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -321,7 +338,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, rowData);
 
-                        if (awareSensor!= null) awareSensor.onAirplaneOFF();
+                        if (awareSensor != null) awareSensor.onAirplaneOFF();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -349,7 +366,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, data);
 
-                        if (awareSensor!= null) awareSensor.onWiFiON();
+                        if (awareSensor != null) awareSensor.onWiFiON();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -370,7 +387,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, data);
 
-                        if (awareSensor!= null) awareSensor.onWiFiOFF();
+                        if (awareSensor != null) awareSensor.onWiFiOFF();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -398,7 +415,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, rowData);
 
-                        if (awareSensor!= null) awareSensor.onBluetoothON();
+                        if (awareSensor != null) awareSensor.onBluetoothON();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -419,7 +436,7 @@ public class Network extends Aware_Sensor {
                     try {
                         context.getContentResolver().insert(Network_Data.CONTENT_URI, rowData);
 
-                        if (awareSensor!= null) awareSensor.onBluetoothOFF();
+                        if (awareSensor != null) awareSensor.onBluetoothOFF();
 
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -446,7 +463,7 @@ public class Network extends Aware_Sensor {
                         try {
                             context.getContentResolver().insert(Network_Data.CONTENT_URI, data);
 
-                            if (awareSensor!= null) awareSensor.onWimaxON();
+                            if (awareSensor != null) awareSensor.onWimaxON();
 
                         } catch (SQLiteException e) {
                             if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -467,7 +484,7 @@ public class Network extends Aware_Sensor {
                         try {
                             context.getContentResolver().insert(Network_Data.CONTENT_URI, data);
 
-                            if (awareSensor!= null) awareSensor.onWimaxOFF();
+                            if (awareSensor != null) awareSensor.onWimaxOFF();
 
                         } catch (SQLiteException e) {
                             if (Aware.DEBUG) Log.d(TAG, e.getMessage());
@@ -484,14 +501,14 @@ public class Network extends Aware_Sensor {
                 NetworkInfo internet = connManager.getActiveNetworkInfo();
                 if (internet == null) {
 
-                    if (awareSensor!= null) awareSensor.onInternetOFF();
+                    if (awareSensor != null) awareSensor.onInternetOFF();
 
                     if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_INTERNET_UNAVAILABLE);
                     Intent not_available = new Intent(ACTION_AWARE_INTERNET_UNAVAILABLE);
                     context.sendBroadcast(not_available);
                 } else {
 
-                    if (awareSensor!= null) awareSensor.onInternetON();
+                    if (awareSensor != null) awareSensor.onInternetON();
 
                     if (Aware.DEBUG) Log.d(TAG, ACTION_AWARE_INTERNET_AVAILABLE);
                     Intent available = new Intent(ACTION_AWARE_INTERNET_AVAILABLE);
@@ -552,14 +569,12 @@ public class Network extends Aware_Sensor {
         unregisterReceiver(networkMonitor);
         teleManager.listen(phoneListener, PhoneStateListener.LISTEN_NONE);
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Network_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Network_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Network_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Network_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Network_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         if (Aware.DEBUG) Log.d(TAG, "Network service terminated...");
     }
@@ -574,15 +589,15 @@ public class Network extends Aware_Sensor {
 
             if (Aware.DEBUG) Log.d(TAG, "Network service active...");
 
-            if (!Aware.isSyncEnabled(this, Network_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Network_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Network_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Network_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Network_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1022927489604",
+    "project_id": "utech-ewellness",
+    "storage_bucket": "utech-ewellness.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022927489604:android:8aca6ac513c33bb3390a11",
+        "android_client_info": {
+          "package_name": "edu.ucla.cs.er.depressionstudy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022927489604-qrlru1j8iv6et8jcp8ki4ukscvgq8vfs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.ucla.cs.er.depressionstudy",
+            "certificate_hash": "6c08a74342b69144bea72d20921bfb13af38a463"
+          }
+        },
+        {
+          "client_id": "1022927489604-k3ktc15690mic1pka1sc2u7pducn3jcu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9YYmo-JXD3aaGg_DmbGvk2SmFwx_GMjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022927489604-k3ktc15690mic1pka1sc2u7pducn3jcu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

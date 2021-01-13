@@ -11,14 +11,12 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -102,7 +100,7 @@ public class Scheduler_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -136,7 +134,7 @@ public class Scheduler_Provider extends ContentProvider {
                 long screen_id = database.insertWithOnConflict(DATABASE_TABLES[0], Scheduler_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (screen_id > 0) {
                     Uri screenUri = ContentUris.withAppendedId(Scheduler_Data.CONTENT_URI, screen_id);
-                    getContext().getContentResolver().notifyChange(screenUri, null);
+                    getContext().getContentResolver().notifyChange(screenUri, null, false);
                     database.setTransactionSuccessful();
                     database.endTransaction();
                     return screenUri;
@@ -187,6 +185,7 @@ public class Scheduler_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case SCHEDULER:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -228,7 +227,7 @@ public class Scheduler_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }

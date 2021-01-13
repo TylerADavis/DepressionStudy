@@ -582,6 +582,11 @@ public class Aware_Preferences {
     public static final String STATUS_KEYBOARD = "status_keyboard";
 
     /**
+     * Mask keyboard input
+     */
+    public static final String MASK_KEYBOARD = "mask_keyboard";
+
+    /**
      * Preferred hash function
      */
     public static final String HASH_FUNCTION = "hash_function";
@@ -635,4 +640,29 @@ public class Aware_Preferences {
      * Fallback to network sync after xh have elapsed without WiFi synching
      */
     public static final String WEBSERVICE_FALLBACK_NETWORK = "fallback_network";
+
+    /**
+     * Log touch and gesture events
+     */
+    public static final String STATUS_TOUCH = "status_touch";
+
+    /**
+     * Masks text produced by touch events
+     */
+    public static final String MASK_TOUCH_TEXT = "mask_touch_text";
+
+    /**
+     * Lock interface after participant joins study
+     */
+    public static final String INTERFACE_LOCKED = "interface_locked";
+
+    /**
+     * Enable real-time streaming through eventbus
+     */
+    public static final String STATUS_WEBSOCKET = "status_websocket";
+
+    /**
+     * Where the websocket server is located (https://domain or IP)
+     */
+    public static final String WEBSOCKET_SERVER = "websocket_server";
 }

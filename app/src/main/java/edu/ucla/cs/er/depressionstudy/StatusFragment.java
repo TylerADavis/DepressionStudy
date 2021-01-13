@@ -1,9 +1,11 @@
 package edu.ucla.cs.er.depressionstudy;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,9 @@ public class StatusFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_status, container, false);
         context = getActivity();
 
-
+        //boolean backgroundLocationPermissionApproved = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS);
+        //System.out.println("background location permission enabled:");
+        //System.out.println(backgroundLocationPermissionApproved);
 
         return rootView;
     }

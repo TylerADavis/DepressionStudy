@@ -11,16 +11,13 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
 import com.aware.Barometer;
-import com.aware.BuildConfig;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -162,7 +159,7 @@ public class Gyroscope_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -204,7 +201,7 @@ public class Gyroscope_Provider extends ContentProvider {
                 if (gyro_id > 0) {
                     Uri gyroUri = ContentUris.withAppendedId(
                             Gyroscope_Sensor.CONTENT_URI, gyro_id);
-                    getContext().getContentResolver().notifyChange(gyroUri, null);
+                    getContext().getContentResolver().notifyChange(gyroUri, null, false);
                     return gyroUri;
                 }
                 database.endTransaction();
@@ -217,8 +214,7 @@ public class Gyroscope_Provider extends ContentProvider {
                 if (gyroData_id > 0) {
                     Uri gyroDataUri = ContentUris.withAppendedId(
                             Gyroscope_Data.CONTENT_URI, gyroData_id);
-                    getContext().getContentResolver().notifyChange(gyroDataUri,
-                            null);
+                    getContext().getContentResolver().notifyChange(gyroDataUri,null, false);
                     return gyroDataUri;
                 }
                 database.endTransaction();
@@ -283,7 +279,7 @@ public class Gyroscope_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -352,6 +348,7 @@ public class Gyroscope_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case GYRO_DEV:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -407,7 +404,7 @@ public class Gyroscope_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }

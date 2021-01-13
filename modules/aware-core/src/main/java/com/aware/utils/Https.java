@@ -103,8 +103,10 @@ public class Https {
         if (url.length() == 0) return null;
 
         try {
-
             URL path = new URL(url);
+            System.out.println("Making a request to " + path.toString());
+            System.out.println("SsslSocketFactory: ");
+            System.out.println(sslSocketFactory);
 
             HttpsURLConnection path_connection = (HttpsURLConnection) path.openConnection();
             path_connection.setSSLSocketFactory(sslSocketFactory);
@@ -208,20 +210,19 @@ public class Https {
 
             String result;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
-                StringBuilder page_content = new StringBuilder("");
+                StringBuilder page_content = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
                     page_content.append(line);
                 }
                 result = page_content.toString();
-                br.close();
             }
             stream.close();
 
             return result;
 
         } catch (IOException | NullPointerException e) {
-            Log.e(TAG, "Sync HTTPS dataGet io/null error: " + e.getMessage());
+            //Log.e(TAG, "Sync HTTPS dataGet io/null error: " + e.getMessage());
         }
 
         return null;

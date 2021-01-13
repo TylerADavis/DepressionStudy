@@ -3,18 +3,10 @@ package com.aware;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.ActivityManager;
+import android.app.*;
 import android.app.ActivityManager.ProcessErrorStateInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -26,14 +18,15 @@ import net.sqlcipher.database.SQLiteException;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.WakefulBroadcastReceiver;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
-import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.view.accessibility.AccessibilityEventCompat;
+import androidx.core.view.accessibility.AccessibilityManagerCompat;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.aware.providers.Applications_Provider;
 import com.aware.providers.Applications_Provider.Applications_Crashes;
@@ -41,6 +34,8 @@ import com.aware.providers.Applications_Provider.Applications_Foreground;
 import com.aware.providers.Applications_Provider.Applications_History;
 import com.aware.providers.Applications_Provider.Applications_Notifications;
 import com.aware.providers.Keyboard_Provider;
+import com.aware.providers.Screen_Provider;
+import com.aware.utils.Converters;
 import com.aware.utils.Encrypter;
 import com.aware.utils.Scheduler;
 
@@ -124,11 +119,6 @@ public class Applications extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event.getPackageName() == null) return;
-
-        if (!Aware.IS_CORE_RUNNING) {
-            Intent aware = new Intent(getApplicationContext(), Aware.class);
-            startService(aware);
-        }
 
         if (Aware.getSetting(getApplicationContext(), Aware_Preferences.STATUS_NOTIFICATIONS).equals("true") && event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             Notification notificationDetails = (Notification) event.getParcelableData();
@@ -294,16 +284,122 @@ public class Applications extends AccessibilityService {
             if (browserConfig != null && parentNodeInfo != null) {
                 capturedUrl = captureUrl(parentNodeInfo, browserConfig);
                 parentNodeInfo.recycle();
+                if (capturedUrl != null) {
+                    keyboard.put(Keyboard_Provider.Keyboard_Data.URL, capturedUrl);
+                } else {
+                    keyboard.put(Keyboard_Provider.Keyboard_Data.URL, "");
+                }
+            } else {
+                keyboard.put(Keyboard_Provider.Keyboard_Data.URL, "");
             }
 
             if (awareSensor != null) awareSensor.onKeyboard(keyboard);
 
             getContentResolver().insert(Keyboard_Provider.Keyboard_Data.CONTENT_URI, keyboard);
 
-            if (true || DEBUG) Log.d(TAG, "Keyboard: " + keyboard.toString() + ", url: " + capturedUrl);
+            if (Aware.DEBUG || DEBUG) Log.d(TAG, "Keyboard: " + keyboard.toString());
 
             Intent keyboard_data = new Intent(Keyboard.ACTION_AWARE_KEYBOARD);
             sendBroadcast(keyboard_data);
+        }
+
+        if (Aware.getSetting(getApplicationContext(), Aware_Preferences.STATUS_TOUCH).equals("true")) {
+            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED) {
+                if (event.getFromIndex() == 0) last_scroll_index = 0;
+
+                if (last_scroll_index > 0) {
+                    if (event.getFromIndex() < last_scroll_index) {
+
+                        ContentValues touch = new ContentValues();
+                        touch.put(Screen_Provider.Screen_Touch.TIMESTAMP, System.currentTimeMillis());
+                        touch.put(Screen_Provider.Screen_Touch.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_APP, event.getPackageName().toString());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION, Screen.ACTION_AWARE_TOUCH_SCROLLED_UP);
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_INDEX_ITEMS, event.getItemCount());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_FROM_INDEX, event.getFromIndex());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_TO_INDEX, event.getToIndex());
+
+                        if (awareSensor != null) awareSensor.onTouch(touch);
+
+                        getContentResolver().insert(Screen_Provider.Screen_Touch.CONTENT_URI, touch);
+
+                        if (DEBUG) Log.d(TAG, "Touch: " + touch.toString());
+
+                        Intent touch_data = new Intent(Screen.ACTION_AWARE_TOUCH_SCROLLED_UP);
+                        sendBroadcast(touch_data);
+
+                    } else if (event.getFromIndex() > last_scroll_index) {
+
+                        ContentValues touch = new ContentValues();
+                        touch.put(Screen_Provider.Screen_Touch.TIMESTAMP, System.currentTimeMillis());
+                        touch.put(Screen_Provider.Screen_Touch.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_APP, event.getPackageName().toString());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION, Screen.ACTION_AWARE_TOUCH_SCROLLED_DOWN);
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_INDEX_ITEMS, event.getItemCount());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_FROM_INDEX, event.getFromIndex());
+                        touch.put(Screen_Provider.Screen_Touch.TOUCH_TO_INDEX, event.getToIndex());
+
+                        if (awareSensor != null) awareSensor.onTouch(touch);
+
+                        getContentResolver().insert(Screen_Provider.Screen_Touch.CONTENT_URI, touch);
+
+                        if (DEBUG) Log.d(TAG, "Touch: " + touch.toString());
+
+                        Intent touch_data = new Intent(Screen.ACTION_AWARE_TOUCH_SCROLLED_DOWN);
+                        sendBroadcast(touch_data);
+
+                    }
+                }
+                last_scroll_index = event.getFromIndex();
+            }
+
+            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+                ContentValues touch = new ContentValues();
+                touch.put(Screen_Provider.Screen_Touch.TIMESTAMP, System.currentTimeMillis());
+                touch.put(Screen_Provider.Screen_Touch.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_APP, event.getPackageName().toString());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION, Screen.ACTION_AWARE_TOUCH_CLICKED);
+                if (Aware.getSetting(getApplicationContext(), Aware_Preferences.MASK_TOUCH_TEXT).equals("true"))
+                    touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION_TEXT, Converters.maskString(event.getText().toString()));
+                else
+                    touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION_TEXT, event.getText().toString());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_INDEX_ITEMS, event.getItemCount());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_FROM_INDEX, event.getFromIndex());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_TO_INDEX, event.getToIndex());
+
+                if (awareSensor != null) awareSensor.onTouch(touch);
+
+                getContentResolver().insert(Screen_Provider.Screen_Touch.CONTENT_URI, touch);
+
+                if (DEBUG) Log.d(TAG, "Touch: " + touch.toString());
+
+                Intent touch_data = new Intent(Screen.ACTION_AWARE_TOUCH_CLICKED);
+                sendBroadcast(touch_data);
+            }
+
+            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
+                ContentValues touch = new ContentValues();
+                touch.put(Screen_Provider.Screen_Touch.TIMESTAMP, System.currentTimeMillis());
+                touch.put(Screen_Provider.Screen_Touch.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_APP, event.getPackageName().toString());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION, Screen.ACTION_AWARE_TOUCH_LONG_CLICKED);
+                if (Aware.getSetting(getApplicationContext(), Aware_Preferences.MASK_TOUCH_TEXT).equals("true"))
+                    touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION_TEXT, Converters.maskString(event.getText().toString()));
+                else
+                    touch.put(Screen_Provider.Screen_Touch.TOUCH_ACTION_TEXT, event.getText().toString());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_INDEX_ITEMS, event.getItemCount());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_FROM_INDEX, event.getFromIndex());
+                touch.put(Screen_Provider.Screen_Touch.TOUCH_TO_INDEX, event.getToIndex());
+
+                if (awareSensor != null) awareSensor.onTouch(touch);
+
+                getContentResolver().insert(Screen_Provider.Screen_Touch.CONTENT_URI, touch);
+
+                if (DEBUG) Log.d(TAG, "Touch: " + touch.toString());
+
+                Intent touch_data = new Intent(Screen.ACTION_AWARE_TOUCH_LONG_CLICKED);
+                sendBroadcast(touch_data);
+            }
         }
     }
 
@@ -353,6 +449,8 @@ public class Applications extends AccessibilityService {
         }
     }
 
+    private int last_scroll_index = 0;
+
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -362,73 +460,75 @@ public class Applications extends AccessibilityService {
         if (!Aware.IS_CORE_RUNNING) {
             Intent aware = new Intent(this, Aware.class);
             startService(aware);
-        } else {
-            Aware.debug(this, "created: " + getClass().getName() + " package: " + getPackageName());
+        }
 
-            Aware.startScheduler(this);
+        //Aware.debug(this, "created: " + getClass().getName() + " package: " + getPackageName());
 
-            DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
-            TAG = Aware.getSetting(this, Aware_Preferences.DEBUG_TAG);
+        Aware.startScheduler(this);
 
-            if (DEBUG) Log.d(Aware.TAG, "Aware service connected to accessibility services...");
+        DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
+        TAG = Aware.getSetting(this, Aware_Preferences.DEBUG_TAG);
 
-            //This makes sure that plugins and apps can check if the accessibility service is active
-            Aware.setSetting(this, Applications.STATUS_AWARE_ACCESSIBILITY, true);
+        if (DEBUG) Log.d(Aware.TAG, "Aware service connected to accessibility services...");
 
-            IntentFilter webservices = new IntentFilter();
-            webservices.addAction(Aware.ACTION_AWARE_SYNC_DATA);
-            registerReceiver(awareMonitor, webservices);
+        //This makes sure that plugins and apps can check if the accessibility service is active
+        Aware.setSetting(this, Applications.STATUS_AWARE_ACCESSIBILITY, true);
 
-            if (Aware.getSetting(getApplicationContext(), Aware_Preferences.FOREGROUND_PRIORITY).equals("true")) {
-                sendBroadcast(new Intent(Aware.ACTION_AWARE_PRIORITY_FOREGROUND));
-            }
+        IntentFilter webservices = new IntentFilter();
+        webservices.addAction(Aware.ACTION_AWARE_SYNC_DATA);
+        registerReceiver(awareMonitor, webservices);
 
-            if (Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS).length() == 0) {
-                Aware.setSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS, 0);
-            }
+        if (Aware.getSetting(getApplicationContext(), Aware_Preferences.FOREGROUND_PRIORITY).equals("true")) {
+            sendBroadcast(new Intent(Aware.ACTION_AWARE_PRIORITY_FOREGROUND));
+        }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && Aware.getSetting(getApplicationContext(), Aware_Preferences.STATUS_APPLICATIONS).equals("true") && Integer.parseInt(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS)) > 0) {
-                try {
-                    Scheduler.Schedule backgroundApps = Scheduler.getSchedule(getApplicationContext(), SCHEDULER_APPLICATIONS_BACKGROUND);
-                    if (backgroundApps == null) {
-                        backgroundApps = new Scheduler.Schedule(SCHEDULER_APPLICATIONS_BACKGROUND)
-                                .setInterval(Long.parseLong(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS)))
-                                .setActionIntentAction(ACTION_AWARE_APPLICATIONS_HISTORY)
-                                .setActionType(Scheduler.ACTION_TYPE_SERVICE)
-                                .setActionClass(getPackageName() + "/" + BackgroundService.class.getName());
+        if (Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS).length() == 0) {
+            Aware.setSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS, 0);
+        }
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && Aware.getSetting(getApplicationContext(), Aware_Preferences.STATUS_APPLICATIONS).equals("true") && Integer.parseInt(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS)) > 0) {
+            try {
+                Scheduler.Schedule backgroundApps = Scheduler.getSchedule(getApplicationContext(), SCHEDULER_APPLICATIONS_BACKGROUND);
+                if (backgroundApps == null) {
+                    backgroundApps = new Scheduler.Schedule(SCHEDULER_APPLICATIONS_BACKGROUND)
+                            .setInterval(Long.parseLong(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_APPLICATIONS)))
+                            .setActionIntentAction(ACTION_AWARE_APPLICATIONS_HISTORY)
+                            .setActionType(Scheduler.ACTION_TYPE_SERVICE)
+                            .setActionClass(getPackageName() + "/" + BackgroundService.class.getName());
+
+                    Scheduler.saveSchedule(this, backgroundApps);
+                } else {
+                    if (backgroundApps.getInterval() != Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_APPLICATIONS))) {
+                        backgroundApps.setInterval(Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_APPLICATIONS)));
                         Scheduler.saveSchedule(this, backgroundApps);
-                    } else {
-                        if (backgroundApps.getInterval() != Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_APPLICATIONS))) {
-                            backgroundApps.setInterval(Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_APPLICATIONS)));
-                            Scheduler.saveSchedule(this, backgroundApps);
-                        }
                     }
-
-                    if (DEBUG)
-                        Log.d(TAG, "Checking background services every " + backgroundApps.getInterval() + " minutes");
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            } else {
-                Scheduler.removeSchedule(getApplicationContext(), SCHEDULER_APPLICATIONS_BACKGROUND);
-                Aware.startScheduler(this);
-                if (DEBUG) Log.d(TAG, "Checking background services is not possible starting Android 5+");
-            }
 
-            Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
+                if (DEBUG)
+                    Log.d(TAG, "Checking background services every " + backgroundApps.getInterval() + " minutes");
 
-            if (!Aware.isSyncEnabled(this, Applications_Provider.getAuthority(this)) && Aware.isStudy(this)) {
-                ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), 1);
-                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Applications_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        } else {
+            Scheduler.removeSchedule(getApplicationContext(), SCHEDULER_APPLICATIONS_BACKGROUND);
+            Aware.startScheduler(this);
+            if (DEBUG)
+                Log.d(TAG, "Checking background services is not possible starting Android 5+");
+        }
+
+        //Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
+
+        if (Aware.isStudy(this)) {
+            ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), 1);
+            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), true);
+
+            long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+            SyncRequest request = new SyncRequest.Builder()
+                    .syncPeriodic(frequency, frequency / 3)
+                    .setSyncAdapter(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this))
+                    .setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
         }
     }
 
@@ -463,14 +563,12 @@ public class Applications extends AccessibilityService {
         //notify the user
         Applications.isAccessibilityServiceActive(getApplicationContext());
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Applications_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Applications_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Applications_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Applications_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         Log.d(TAG, "Accessibility Service has been unbound...");
 
@@ -484,6 +582,7 @@ public class Applications extends AccessibilityService {
      * @author df
      */
     private final ContextBroadcaster awareMonitor = new ContextBroadcaster();
+
     public class ContextBroadcaster extends WakefulBroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -504,13 +603,15 @@ public class Applications extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
+        //Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
     }
 
     private static Applications.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Applications.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Applications.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
@@ -518,24 +619,28 @@ public class Applications extends AccessibilityService {
     public interface AWARESensorObserver {
         /**
          * Callback when the foreground application changed
+         *
          * @param data
          */
         void onForeground(ContentValues data);
 
         /**
          * Callback when a notification is triggered
+         *
          * @param data
          */
         void onNotification(ContentValues data);
 
         /**
          * Callback when an application crashed
+         *
          * @param data
          */
         void onCrash(ContentValues data);
 
         /**
          * Callback upon keyboard input changed
+         *
          * @param data
          */
         void onKeyboard(ContentValues data);
@@ -543,9 +648,17 @@ public class Applications extends AccessibilityService {
         /**
          * NOTE: Not compatible with Lollipop 5+
          * Callback when background services changed
+         *
          * @param data
          */
         void onBackground(ContentValues data);
+
+        /**
+         * Callback upon touch input changed
+         *
+         * @param data
+         */
+        void onTouch(ContentValues data);
     }
 
     private synchronized static boolean isAccessibilityEnabled(Context context) {
@@ -590,7 +703,7 @@ public class Applications extends AccessibilityService {
         }
 
         //Keep the global setting up-to-date
-        Aware.setSetting(context, Applications.STATUS_AWARE_ACCESSIBILITY, enabled, "com.aware.phone");
+        Aware.setSetting(context, Applications.STATUS_AWARE_ACCESSIBILITY, enabled, context.getApplicationContext().getPackageName());
 
         return enabled;
     }
@@ -602,16 +715,17 @@ public class Applications extends AccessibilityService {
      */
     public synchronized static boolean isAccessibilityServiceActive(Context c) {
         if (!isAccessibilityEnabled(c)) {
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c, Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL);
             mBuilder.setSmallIcon(R.drawable.ic_stat_aware_accessibility);
             mBuilder.setContentTitle(c.getResources().getString(R.string.aware_activate_accessibility_title));
             mBuilder.setContentText(c.getResources().getString(R.string.aware_activate_accessibility));
             mBuilder.setAutoCancel(true);
             mBuilder.setOnlyAlertOnce(true); //notify the user only once
             mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
-
+            mBuilder = Aware.setNotificationProperties(mBuilder, Aware.AWARE_NOTIFICATION_IMPORTANCE_GENERAL);
+            mBuilder.setSound(null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_ID);
+                mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL);
 
             Intent accessibilitySettings = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
             accessibilitySettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -629,6 +743,7 @@ public class Applications extends AccessibilityService {
     /**
      * Applications background service
      * - Updates the current running sync_applications statistics
+     *
      * @author df
      */
     public static class BackgroundService extends IntentService {

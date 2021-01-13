@@ -3,17 +3,13 @@ package com.aware.utils;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.PermissionChecker;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
-
+import androidx.core.content.PermissionChecker;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ui.PermissionsHandler;
@@ -74,9 +70,18 @@ public class Aware_Sensor extends Service {
         filter.addAction(Aware.ACTION_AWARE_CURRENT_CONTEXT);
         filter.addAction(Aware.ACTION_AWARE_STOP_SENSORS);
         filter.addAction(Aware.ACTION_AWARE_SYNC_DATA);
+
+        if (contextBroadcaster == null) {
+            contextBroadcaster = new ContextBroadcaster(CONTEXT_PRODUCER, TAG, AUTHORITY);
+        }
+
         registerReceiver(contextBroadcaster, filter);
 
         REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        //REQUIRED_PERMISSIONS.add(Manifest.permission.GET_ACCOUNTS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_SETTINGS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_STATS);
 
         Log.d(Aware.TAG, "created: " + getClass().getName() + " package: " + getPackageName());
     }
@@ -102,9 +107,9 @@ public class Aware_Sensor extends Service {
         } else {
             PERMISSIONS_OK = true;
             if (Aware.getSetting(this, Aware_Preferences.STATUS_WEBSERVICE).equals("true")) {
-                SSLManager.handleUrl(getApplicationContext(), Aware.getSetting(this, Aware_Preferences.WEBSERVICE_SERVER), true);
+                downloadCertificate(this);
             }
-            Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
+            //Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -114,7 +119,7 @@ public class Aware_Sensor extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (PERMISSIONS_OK) {
-            Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
+            //Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
         }
 
         //Unregister Context Broadcaster
@@ -131,16 +136,27 @@ public class Aware_Sensor extends Service {
      *
      * @author denzil
      */
-    public class ContextBroadcaster extends WakefulBroadcastReceiver {
+    public static class ContextBroadcaster extends BroadcastReceiver {
+
+        private ContextProducer cp;
+        private String tag;
+        private String provider;
+
+        public ContextBroadcaster(ContextProducer contextProducer, String logcatTag, String providerAuthority) {
+            this.cp = contextProducer;
+            this.tag = logcatTag;
+            this.provider = providerAuthority;
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Aware.ACTION_AWARE_CURRENT_CONTEXT)) {
-                if (CONTEXT_PRODUCER != null) {
-                    CONTEXT_PRODUCER.onContext();
+                if (cp != null) {
+                    cp.onContext();
                 }
             }
             if (intent.getAction().equals(Aware.ACTION_AWARE_STOP_SENSORS)) {
-                if (Aware.DEBUG) Log.d(TAG, TAG + " stopped");
+                if (Aware.DEBUG) Log.d(tag, tag + " stopped");
                 try {
                     Intent self = new Intent(context, Class.forName(context.getApplicationContext().getClass().getName()));
                     context.stopService(self);
@@ -148,16 +164,29 @@ public class Aware_Sensor extends Service {
                     e.printStackTrace();
                 }
             }
-            if (intent.getAction().equals(Aware.ACTION_AWARE_SYNC_DATA) && AUTHORITY.length() > 0) {
+            if (intent.getAction().equals(Aware.ACTION_AWARE_SYNC_DATA) && provider.length() > 0) {
                 Bundle sync = new Bundle();
                 sync.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
                 sync.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                ContentResolver.requestSync(Aware.getAWAREAccount(context), AUTHORITY, sync);
+                ContentResolver.requestSync(Aware.getAWAREAccount(context), provider, sync);
             }
         }
     }
 
-    private ContextBroadcaster contextBroadcaster = new ContextBroadcaster();
+    private void downloadCertificate(Context context) {
+        new SSLDownloadTask().execute(context);
+    }
+
+    class SSLDownloadTask extends AsyncTask<Context, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Context... params) {
+            SSLManager.handleUrl(getApplicationContext(), Aware.getSetting(params[0], Aware_Preferences.WEBSERVICE_SERVER), true);
+            return null;
+        }
+    }
+
+    private static ContextBroadcaster contextBroadcaster = null;
 
     @Override
     public IBinder onBind(Intent intent) {

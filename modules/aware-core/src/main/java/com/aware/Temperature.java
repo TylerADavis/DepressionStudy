@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SyncRequest;
 import android.database.Cursor;
 import android.database.SQLException;
 import net.sqlcipher.database.SQLiteException;
@@ -94,7 +95,7 @@ public class Temperature extends Aware_Sensor implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         long TS = System.currentTimeMillis();
-        if (ENFORCE_FREQUENCY && TS < LAST_TS + FREQUENCY/1000 )
+        if (ENFORCE_FREQUENCY && TS < LAST_TS + FREQUENCY / 1000)
             return;
         if (LAST_VALUE != null && THRESHOLD > 0 && Math.abs(event.values[0] - LAST_VALUE) < THRESHOLD) {
             return;
@@ -109,7 +110,7 @@ public class Temperature extends Aware_Sensor implements SensorEventListener {
         rowData.put(Temperature_Data.ACCURACY, event.accuracy);
         rowData.put(Temperature_Data.LABEL, LABEL);
 
-        if(awareSensor != null) awareSensor.onTemperatureChanged(rowData);
+        if (awareSensor != null) awareSensor.onTemperatureChanged(rowData);
 
         data_values.add(rowData);
         LAST_TS = TS;
@@ -143,12 +144,15 @@ public class Temperature extends Aware_Sensor implements SensorEventListener {
     }
 
     private static Temperature.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Temperature.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Temperature.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
+
     public interface AWARESensorObserver {
         void onTemperatureChanged(ContentValues data);
     }
@@ -234,14 +238,12 @@ public class Temperature extends Aware_Sensor implements SensorEventListener {
 
         unregisterReceiver(dataLabeler);
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Temperature_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Temperature_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Temperature_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Temperature_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Temperature_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         if (Aware.DEBUG) Log.d(TAG, "Temperature service terminated...");
     }
@@ -292,15 +294,15 @@ public class Temperature extends Aware_Sensor implements SensorEventListener {
                 if (Aware.DEBUG) Log.d(TAG, "Temperature service active...");
             }
 
-            if (!Aware.isSyncEnabled(this, Temperature_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Temperature_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Temperature_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Temperature_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Temperature_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 

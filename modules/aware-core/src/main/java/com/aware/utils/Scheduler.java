@@ -182,7 +182,10 @@ public class Scheduler extends Aware_Sensor {
                 data.put(Scheduler_Provider.Scheduler_Data.SCHEDULE, schedule.build().toString());
                 data.put(Scheduler_Provider.Scheduler_Data.PACKAGE_NAME, (is_global) ? "com.aware.phone" : context.getPackageName());
 
-                Cursor schedules = context.getContentResolver().query(Scheduler_Provider.Scheduler_Data.CONTENT_URI, null, Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + context.getPackageName() + "'", null, null);
+                String selection = Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + context.getPackageName() + "'";
+                Cursor schedules = context.getContentResolver().query(Scheduler_Provider.Scheduler_Data.CONTENT_URI, null, selection, null, null);
+
+                System.out.println("# schedules: " + schedules.getCount() + " (" + selection + ")");
                 if (schedules != null && schedules.getCount() == 1) {
                     try {
                         Log.d(Scheduler.TAG, "Updating already existing schedule...");
@@ -196,6 +199,10 @@ public class Scheduler extends Aware_Sensor {
                     try {
                         Log.d(Scheduler.TAG, "New schedule: " + data.toString());
                         context.getContentResolver().insert(Scheduler_Provider.Scheduler_Data.CONTENT_URI, data);
+
+                        Cursor schedules2 = context.getContentResolver().query(Scheduler_Provider.Scheduler_Data.CONTENT_URI, null, selection, null, null);
+                        System.out.println("# schedules AFTER INSERTION: " + schedules2.getCount() + " (" + selection + ")");
+
                     } catch (SQLiteException e) {
                         if (Aware.DEBUG) Log.d(TAG, e.getMessage());
                     } catch (SQLException e) {
@@ -498,7 +505,7 @@ public class Scheduler extends Aware_Sensor {
     public static void clearSchedules(Context c) {
         String standalone = "";
         if (c.getResources().getBoolean(R.bool.standalone)) {
-            standalone = " OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE 'com.aware.phone'";
+            standalone = " OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + c.getApplicationContext().getPackageName() + "'";
         }
 
         Cursor scheduled_tasks = c.getContentResolver().query(Scheduler_Provider.Scheduler_Data.CONTENT_URI, null, Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + c.getPackageName() + "'" + standalone, null, Scheduler_Provider.Scheduler_Data.TIMESTAMP + " ASC");
@@ -623,20 +630,14 @@ public class Scheduler extends Aware_Sensor {
 
         if (PERMISSIONS_OK) {
 
-            //Restores core AWARE service in case it get's killed
-            if (!Aware.IS_CORE_RUNNING) {
-                Intent aware = new Intent(getApplicationContext(), Aware.class);
-                startService(aware);
-            }
-
-
-            DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
+            //DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
+            DEBUG = true;
 
             if (DEBUG) Log.d(TAG, "Checking for scheduled tasks: " + getPackageName());
 
             String standalone = "";
             if (getApplicationContext().getResources().getBoolean(R.bool.standalone)) {
-                standalone = " OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE 'com.aware.phone'";
+                standalone = " OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getApplicationContext().getPackageName() + "'";
             }
 
             Cursor scheduled_tasks = getContentResolver().query(Scheduler_Provider.Scheduler_Data.CONTENT_URI, null, Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getPackageName() + "'" + standalone, null, Scheduler_Provider.Scheduler_Data.TIMESTAMP + " ASC");
@@ -825,7 +826,6 @@ public class Scheduler extends Aware_Sensor {
                 schedule_data_cursor.close();
 
             // This is a scheduled task on a specific timestamp.
-            // NOTE: Once triggered, it's deleted from the database automatically.
             if (schedule.getTimer() != -1 && last_triggered == 0) { //not been triggered yet
                 Calendar schedulerTimer = Calendar.getInstance();
                 schedulerTimer.setTimeInMillis(schedule.getTimer());
@@ -841,6 +841,8 @@ public class Scheduler extends Aware_Sensor {
                                     + "\n Time to trigger: " + Converters.readable_elapsed(schedule.getTimer() - now.getTimeInMillis()));
                     return false;
                 }
+            } else if (schedule.getTimer() != -1 && last_triggered != 0) {
+                return false; //already triggered, do nothing.
             }
 
             Calendar previous = null;
@@ -1183,7 +1185,7 @@ public class Scheduler extends Aware_Sensor {
 
             if (schedule.getTimer() != -1) {
 
-                removeSchedule(getApplicationContext(), schedule.getScheduleID());
+                //removeSchedule(getApplicationContext(), schedule.getScheduleID());
 
                 //Check if this scheduler is a random and it is the last time it was triggered, re-schedule new randoms
                 if (schedule.getRandom().length() > 0 && schedule.getScheduleID().contains("_last") && schedule.getScheduleID().contains("_random_")) {
@@ -1195,17 +1197,17 @@ public class Scheduler extends Aware_Sensor {
                     //recreate random scheduler for tomorrow
                     Scheduler.rescheduleRandom(getApplicationContext(), schedule);
                 }
-
-            } else {
-                ContentValues data = new ContentValues();
-                data.put(Scheduler_Provider.Scheduler_Data.LAST_TRIGGERED, System.currentTimeMillis());
-
-                if (getApplicationContext().getResources().getBoolean(R.bool.standalone)) {
-                    getContentResolver().update(Scheduler_Provider.Scheduler_Data.CONTENT_URI, data, Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getPackageName() + "' OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE 'com.aware.phone'", null);
-                } else {
-                    getContentResolver().update(Scheduler_Provider.Scheduler_Data.CONTENT_URI, data, Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getPackageName() + "'", null);
-                }
             }
+
+            ContentValues data = new ContentValues();
+            data.put(Scheduler_Provider.Scheduler_Data.LAST_TRIGGERED, System.currentTimeMillis());
+
+            if (getApplicationContext().getResources().getBoolean(R.bool.standalone)) {
+                getContentResolver().update(Scheduler_Provider.Scheduler_Data.CONTENT_URI, data, Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND (" + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getPackageName() + "' OR " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE 'com.aware.phone')", null);
+            } else {
+                getContentResolver().update(Scheduler_Provider.Scheduler_Data.CONTENT_URI, data, Scheduler_Provider.Scheduler_Data.SCHEDULE_ID + " LIKE '" + schedule.getScheduleID() + "' AND " + Scheduler_Provider.Scheduler_Data.PACKAGE_NAME + " LIKE '" + getPackageName() + "'", null);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

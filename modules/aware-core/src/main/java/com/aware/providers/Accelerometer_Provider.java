@@ -8,20 +8,16 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
-//import net.sqlcipher.database.SQLiteCantOpenDatabaseException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Accelerometer;
 import com.aware.Aware;
-import com.aware.BuildConfig;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -163,7 +159,7 @@ public class Accelerometer_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -201,7 +197,7 @@ public class Accelerometer_Provider extends ContentProvider {
                 long accel_id = database.insertWithOnConflict(DATABASE_TABLES[0], Accelerometer_Sensor.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (accel_id > 0) {
                     Uri accelUri = ContentUris.withAppendedId(Accelerometer_Sensor.CONTENT_URI, accel_id);
-                    getContext().getContentResolver().notifyChange(accelUri, null);
+                    getContext().getContentResolver().notifyChange(accelUri, null, false);
                     database.setTransactionSuccessful();
                     database.endTransaction();
                     return accelUri;
@@ -212,7 +208,7 @@ public class Accelerometer_Provider extends ContentProvider {
                 long accelData_id = database.insertWithOnConflict(DATABASE_TABLES[1], Accelerometer_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (accelData_id > 0) {
                     Uri accelDataUri = ContentUris.withAppendedId(Accelerometer_Data.CONTENT_URI, accelData_id);
-                    getContext().getContentResolver().notifyChange(accelDataUri, null);
+                    getContext().getContentResolver().notifyChange(accelDataUri, null, false);
                     database.setTransactionSuccessful();
                     database.endTransaction();
                     return accelDataUri;
@@ -279,7 +275,7 @@ public class Accelerometer_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -338,6 +334,7 @@ public class Accelerometer_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case ACCEL_DEV:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -386,7 +383,7 @@ public class Accelerometer_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }

@@ -11,17 +11,13 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
-import com.aware.ESM;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 /**
  * ESM Content Provider Allows you to access all the recorded readings on the
@@ -120,7 +116,7 @@ public class ESM_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 
@@ -157,7 +153,7 @@ public class ESM_Provider extends ContentProvider {
                 if (quest_id > 0) {
                     Uri questUri = ContentUris.withAppendedId(ESM_Data.CONTENT_URI,
                             quest_id);
-                    getContext().getContentResolver().notifyChange(questUri, null);
+                    getContext().getContentResolver().notifyChange(questUri, null, false);
                     return questUri;
                 }
                 database.endTransaction();
@@ -211,6 +207,7 @@ public class ESM_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case ESMS_QUEUE:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -257,7 +254,7 @@ public class ESM_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }

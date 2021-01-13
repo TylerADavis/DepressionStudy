@@ -1,29 +1,25 @@
 
 package com.aware.utils;
 
-import android.Manifest;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
-import net.sqlcipher.database.SQLiteException;
-import net.sqlcipher.database.SQLiteOpenHelper;
 import android.os.Build;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import com.aware.R;
+
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
+import net.sqlcipher.database.SQLiteException;
+import net.sqlcipher.database.SQLiteOpenHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,9 +28,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.security.KeyStore;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +38,6 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
 
 /**
  * ContentProvider database helper<br/>
@@ -252,7 +245,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // sdcard/AWARE/ (shareable, does not delete when uninstalling)
                 aware_folder = new File(Environment.getExternalStoragePublicDirectory("AWARE").toString());
             } else {
-                // sdcard/Android/<app_package_name>/AWARE/ (not shareable, deletes when uninstalling package)
                 aware_folder = new File(ContextCompat.getExternalFilesDirs(mContext, null)[0] + "/AWARE");
             }
 
@@ -264,10 +256,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase.loadLibs(mContext);
             database = SQLiteDatabase.openOrCreateDatabase(new File(aware_folder, this.databaseName).getPath(), "PASSWORD", this.cursorFactory);
+
             return database;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static boolean isEmulator() {
+        return Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT);
     }
 
     private String getDatabasePassword() {

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SyncRequest;
 import android.database.SQLException;
 import net.sqlcipher.database.SQLiteException;
 import android.os.Bundle;
@@ -71,15 +72,18 @@ public class Telephony extends Aware_Sensor {
     }
 
     private static Telephony.AWARESensorObserver awareSensor;
+
     public static void setSensorObserver(Telephony.AWARESensorObserver observer) {
         awareSensor = observer;
     }
+
     public static Telephony.AWARESensorObserver getSensorObserver() {
         return awareSensor;
     }
 
     public interface AWARESensorObserver {
         void onSignalStrengthChanged(SignalStrength strength);
+
         void onCellChanged(CellLocation cellLocation);
     }
 
@@ -109,15 +113,15 @@ public class Telephony extends Aware_Sensor {
 
             if (Aware.DEBUG) Log.d(TAG, "Telephony service active...");
 
-            if (!Aware.isSyncEnabled(this, Telephony_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Telephony_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Telephony_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Telephony_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), Telephony_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 
@@ -130,14 +134,12 @@ public class Telephony extends Aware_Sensor {
 
         telephonyManager.listen(telephonyState, PhoneStateListener.LISTEN_NONE);
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, Telephony_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Telephony_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Telephony_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Telephony_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Telephony_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         if (Aware.DEBUG) Log.d(TAG, "Telephony service terminated...");
     }
@@ -199,7 +201,7 @@ public class Telephony extends Aware_Sensor {
                 }
 
                 List<NeighboringCellInfo> neighbors = telephonyManager.getNeighboringCellInfo();
-                if (neighbors.size() > 0) {
+                if (neighbors != null && neighbors.size() > 0) {
                     for (NeighboringCellInfo neighbor : neighbors) {
                         rowData = new ContentValues();
                         rowData.put(GSM_Neighbors_Data.TIMESTAMP, timestamp);

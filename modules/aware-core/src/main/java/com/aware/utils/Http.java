@@ -89,7 +89,7 @@ public class Http {
 
             return result;
         } catch (IOException e) {
-            Log.e(TAG, "Sync HTTP dataGet io/null error: " + e.getMessage());
+            Log.e(TAG, "HTTP dataGet io/null error: " + e.getMessage());
             return null;
         }
     }
@@ -130,13 +130,13 @@ public class Http {
             os.close();
 
             path_connection.connect();
-            //if (Aware.DEBUG) {
-                Log.d(TAG,"Request: POST, URL: " + url + "\nData:" + builder.build().getEncodedQuery());
-                Log.d(TAG, "Status: " + path_connection.getResponseCode() );
-                Log.e(TAG, path_connection.getResponseMessage() );
-            //}
-            if( path_connection.getResponseCode() != HttpURLConnection.HTTP_OK ) {
 
+            if( path_connection.getResponseCode() != HttpURLConnection.HTTP_OK ) {
+                if (Aware.DEBUG) {
+                    Log.d(TAG,"Request: POST, URL: " + url + "\nData:" + builder.build().getEncodedQuery());
+                    Log.d(TAG, "Status: " + path_connection.getResponseCode() );
+                    Log.e(TAG, path_connection.getResponseMessage() );
+                }
                 return null;
             }
 
@@ -160,11 +160,11 @@ public class Http {
             return result;
 
 		}catch (UnsupportedEncodingException e) {
-//            Log.e(TAG, "Sync HTTP dataPost encoding error: " + e.getMessage());
+            if (Aware.DEBUG) Log.e(TAG, "HTTP dataPost encoding error: " + e.getMessage());
 		} catch (IOException e) {
-//            Log.e(TAG, "Sync HTTP dataPost io/null error: " + e.getMessage());
+            if (Aware.DEBUG) Log.e(TAG, "HTTP dataPost io/null error: " + e.getMessage());
 		} catch (IllegalStateException e ) {
-//            Log.e(TAG, "Sync HTTP dataPost state error: " + e.getMessage());
+            if (Aware.DEBUG) Log.e(TAG, "HTTP dataPost state error: " + e.getMessage());
 		}
         return null;
 	}

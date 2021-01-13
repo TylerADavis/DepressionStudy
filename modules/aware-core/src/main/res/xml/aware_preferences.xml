@@ -102,12 +102,20 @@
                 android:title="Application installations" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:dependency="status_applications"
                 android:key="status_keyboard"
                 android:persistent="true"
                 android:summary="Logs keyboard input (no passwords)"
                 android:title="Keyboard" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="status_applications"
+                android:key="mask_keyboard"
+                android:persistent="true"
+                android:summary="Swaps all alphanumeric characters by A, a, and 1"
+                android:title="Mask keyboard input" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -222,7 +230,7 @@
             android:title="Mobile ESM/EMA">
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="status_esm"
                 android:persistent="true"
                 android:summary="Allow remote and applications ESM requests for human-based sensing"
@@ -314,14 +322,14 @@
             android:title="Locations">
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="status_location_gps"
                 android:persistent="true"
                 android:summary="GPS location tracking"
                 android:title="GPS" />
 
             <EditTextPreference
-                android:defaultValue="180"
+                android:defaultValue="600"
                 android:dependency="status_location_gps"
                 android:inputType="number"
                 android:key="frequency_location_gps"
@@ -339,14 +347,14 @@
                 android:title="Movement threshold for GPS updates" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="status_location_network"
                 android:persistent="true"
                 android:summary="Triangulation location tracking"
                 android:title="Triangulation (cell tower and Wi-Fi)" />
 
             <EditTextPreference
-                android:defaultValue="300"
+                android:defaultValue="600"
                 android:dependency="status_location_network"
                 android:inputType="number"
                 android:key="frequency_location_network"
@@ -371,7 +379,7 @@
                 android:title="Passive location provider" />
 
             <EditTextPreference
-                android:defaultValue="300"
+                android:defaultValue="600"
                 android:inputType="number"
                 android:key="location_expiration_time"
                 android:persistent="true"
@@ -645,7 +653,22 @@
                 android:key="status_screen"
                 android:persistent="true"
                 android:summary="Capture screen events (on, off, locked, unlocked)"
-                android:title="Active" />
+                android:title="Screen usage" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="status_touch"
+                android:persistent="true"
+                android:summary="Capture clicks, long clicks and scroll up/down events"
+                android:title="Screen interaction" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="status_touch"
+                android:key="mask_touch_text"
+                android:persistent="true"
+                android:summary="Swaps all alphanumeric characters by A, a, and 1"
+                android:title="Mask text in touch events" />
 
         </PreferenceScreen>
         <PreferenceScreen
@@ -739,6 +762,27 @@
         android:key="data_exchange"
         android:summary="Webservices, MQTT"
         android:title="Context exchange protocols">
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_action_websocket"
+            android:key="websocket"
+            android:summary="Real-time websocket stream (AWARE Micro)"
+            android:title="Real-time streaming">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="status_websocket"
+                android:persistent="true"
+                android:title="Enable real-time streaming to AWARE Micro"/>
+
+            <EditTextPreference
+                android:key="websocket_server"
+                android:persistent="true"
+                android:summary="Websocket URL"
+                android:title="Websocket Server" />
+
+        </PreferenceScreen>
+
         <PreferenceScreen
             android:icon="@drawable/ic_action_mqtt"
             android:key="mqtt"
@@ -802,27 +846,27 @@
             android:title="AWARE Study">
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="status_webservice"
                 android:persistent="true"
                 android:title="Active" />
 
             <EditTextPreference
-                android:defaultValue="https://api.awareframework.com/index.php"
+                android:defaultValue="https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric"
                 android:key="webservice_server"
                 android:persistent="true"
                 android:summary="URL"
                 android:title="Study URL" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="webservice_wifi_only"
                 android:persistent="true"
                 android:summary="Sync only over Wi-Fi"
                 android:title="Wi-Fi only" />
 
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="12"
                 android:dependency="webservice_wifi_only"
                 android:key="fallback_network"
                 android:persistent="true"
@@ -854,7 +898,7 @@
                 android:title="Clean-up old data?" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="webservice_silent"
                 android:persistent="true"
                 android:summary="Disable data sync notifications"
@@ -887,7 +931,7 @@
             android:title="Advanced options">
 
             <CheckBoxPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:key="debug_flag"
                 android:persistent="true"
                 android:summary="Show messages in logcat"
@@ -909,18 +953,25 @@
                 android:title="Lightweight sampling" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="webservice_simple"
                 android:persistent="true"
                 android:summary="Disable database metadata sync to server"
                 android:title="Simple webservice" />
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="webservice_remove_data"
                 android:persistent="true"
                 android:summary="WARNING: This may cause problems with some sensors or plugins if they rely on history data (e.g., battery charges, discharges, ...)"
                 android:title="Wipe data on upload" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="interface_locked"
+                android:persistent="true"
+                android:summary="Simplifies the interface for participants after joining a study"
+                android:title="Participant interface mode" />
 
             <CheckBoxPreference
                 android:defaultValue="false"

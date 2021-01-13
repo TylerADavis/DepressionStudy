@@ -6,24 +6,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-
+import android.widget.*;
+import androidx.annotation.NonNull;
 import com.aware.Aware;
 import com.aware.ESM;
 import com.aware.R;
 import com.aware.providers.ESM_Provider;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -88,7 +81,6 @@ public class ESM_Radio extends ESM_Question {
 
             TextView esm_instructions = (TextView) ui.findViewById(R.id.esm_instructions);
             esm_instructions.setText(getInstructions());
-            esm_instructions.setTextSize(20);
 
             final RadioGroup radioOptions = (RadioGroup) ui.findViewById(R.id.esm_radio);
             radioOptions.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +100,6 @@ public class ESM_Radio extends ESM_Question {
                 final RadioButton radioOption = new RadioButton(getActivity());
                 radioOption.setId(i);
                 radioOption.setText(radios.getString(i));
-                radioOption.setTextSize(18);
                 radioOptions.addView(radioOption);
 
                 if (radios.getString(i).equals(getResources().getString(R.string.aware_esm_other))) {

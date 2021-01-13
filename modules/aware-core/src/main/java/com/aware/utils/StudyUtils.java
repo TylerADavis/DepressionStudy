@@ -187,6 +187,11 @@ public class StudyUtils extends IntentService {
         }
     }
 
+    public static void resetLogs(Context context){
+        context.getContentResolver().delete(Aware_Provider.Aware_Log.CONTENT_URI, null, null);
+        Log.d(Aware.TAG, "Cleared logs");
+    }
+
     /**
      * Sets first all the settings to the client.
      * If there are plugins, apply the same settings to them.
@@ -237,18 +242,19 @@ public class StudyUtils extends IntentService {
         }
 
         //Set the plugins' settings now
-        ArrayList<String> active_plugins = new ArrayList<>();
+        ArrayList<String> enabled_plugins = new ArrayList<>();
         for (int i = 0; i < plugins.length(); i++) {
             try {
                 JSONObject plugin_config = plugins.getJSONObject(i);
 
                 String package_name = plugin_config.getString("plugin");
-                active_plugins.add(package_name);
-
                 JSONArray plugin_settings = plugin_config.getJSONArray("settings");
                 for (int j = 0; j < plugin_settings.length(); j++) {
                     JSONObject plugin_setting = plugin_settings.getJSONObject(j);
                     Aware.setSetting(context, plugin_setting.getString("setting"), plugin_setting.get("value"), package_name);
+                    if (plugin_setting.getString("setting").contains("status_") && plugin_setting.get("value").equals("true")) {
+                        enabled_plugins.add(package_name);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -259,7 +265,8 @@ public class StudyUtils extends IntentService {
         if (schedulers.length() > 0)
             Scheduler.setSchedules(context, schedulers);
 
-        for (String package_name : active_plugins) {
+        //Start enabled plugins
+        for (String package_name : enabled_plugins) {
             PackageInfo installed = PluginsManager.isInstalled(context, package_name);
             if (installed != null) {
                 Aware.startPlugin(context, package_name);
@@ -267,6 +274,8 @@ public class StudyUtils extends IntentService {
                 Aware.downloadPlugin(context, package_name, null, false);
             }
         }
+
+        resetLogs(context);
 
         Intent aware = new Intent(context, Aware.class);
         context.startService(aware);

@@ -3,17 +3,12 @@ package com.aware.utils;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.PermissionChecker;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
-
+import androidx.core.content.PermissionChecker;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ui.PermissionsHandler;
@@ -76,9 +71,18 @@ public class Aware_Plugin extends Service {
         filter.addAction(Aware.ACTION_AWARE_CURRENT_CONTEXT);
         filter.addAction(Aware.ACTION_AWARE_STOP_PLUGINS);
         filter.addAction(Aware.ACTION_AWARE_SYNC_DATA);
+
+        if (contextBroadcaster == null) {
+            contextBroadcaster = new ContextBroadcaster(CONTEXT_PRODUCER, TAG, AUTHORITY);
+        }
+
         registerReceiver(contextBroadcaster, filter);
 
         REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        //REQUIRED_PERMISSIONS.add(Manifest.permission.GET_ACCOUNTS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_SETTINGS);
+        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_SYNC_STATS);
 
         Log.d(Aware.TAG, "created: " + getClass().getName() + " package: " + getPackageName());
     }
@@ -105,17 +109,19 @@ public class Aware_Plugin extends Service {
 
             PERMISSIONS_OK = true;
 
+            if (Aware.getSetting(this, Aware_Preferences.STATUS_WEBSERVICE).equals("true")) {
+                SSLManager.handleUrl(getApplicationContext(), Aware.getSetting(this, Aware_Preferences.WEBSERVICE_SERVER), true);
+            }
+
             //Restores core AWARE service in case it get's killed
             if (!Aware.IS_CORE_RUNNING) {
                 Intent aware = new Intent(getApplicationContext(), Aware.class);
                 startService(aware);
             }
 
-            if (Aware.getSetting(this, Aware_Preferences.STATUS_WEBSERVICE).equals("true")) {
-                SSLManager.handleUrl(getApplicationContext(), Aware.getSetting(this, Aware_Preferences.WEBSERVICE_SERVER), true);
-            }
+            //Aware.startAWARE(getApplicationContext());
 
-            Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
+            //Aware.debug(this, "active: " + getClass().getName() + " package: " + getPackageName());
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -125,7 +131,9 @@ public class Aware_Plugin extends Service {
         super.onDestroy();
 
         if (PERMISSIONS_OK) {
-            Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
+            //Aware.debug(this, "destroyed: " + getClass().getName() + " package: " + getPackageName());
+
+            Aware.stopAWARE(getApplicationContext());
         }
 
         if (contextBroadcaster != null) unregisterReceiver(contextBroadcaster);
@@ -148,16 +156,26 @@ public class Aware_Plugin extends Service {
      * - ACTION_AWARE_SYNC_DATA: sends the data to the server
      * @author denzil
      */
-    public class ContextBroadcaster extends WakefulBroadcastReceiver {
+    public static class ContextBroadcaster extends BroadcastReceiver {
+        private ContextProducer cp;
+        private String tag;
+        private String provider;
+
+        public ContextBroadcaster(ContextProducer contextProducer, String logcatTag, String providerAuthority) {
+            this.cp = contextProducer;
+            this.tag = logcatTag;
+            this.provider = providerAuthority;
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Aware.ACTION_AWARE_CURRENT_CONTEXT)) {
-                if (CONTEXT_PRODUCER != null) {
-                    CONTEXT_PRODUCER.onContext();
+                if (cp != null) {
+                    cp.onContext();
                 }
             }
             if (intent.getAction().equals(Aware.ACTION_AWARE_STOP_PLUGINS)) {
-                if (Aware.DEBUG) Log.d(TAG, TAG + " stopped");
+                if (Aware.DEBUG) Log.d(tag, tag + " stopped");
                 try {
                     Intent self = new Intent(context, Class.forName(context.getApplicationContext().getClass().getName()));
                     context.stopService(self);
@@ -165,16 +183,16 @@ public class Aware_Plugin extends Service {
                     e.printStackTrace();
                 }
             }
-            if (intent.getAction().equals(Aware.ACTION_AWARE_SYNC_DATA) && AUTHORITY.length() > 0) {
+            if (intent.getAction().equals(Aware.ACTION_AWARE_SYNC_DATA) && provider.length() > 0) {
                 Bundle sync = new Bundle();
                 sync.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
                 sync.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                ContentResolver.requestSync(Aware.getAWAREAccount(context), AUTHORITY, sync);
+                ContentResolver.requestSync(Aware.getAWAREAccount(context), provider, sync);
             }
         }
     }
 
-    private ContextBroadcaster contextBroadcaster = new ContextBroadcaster();
+    private static ContextBroadcaster contextBroadcaster = null;
 
     @Override
     public IBinder onBind(Intent arg0) {

@@ -10,22 +10,19 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
-import com.aware.BuildConfig;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
 * Created by denzil on 21/10/14.
 */
 public class Keyboard_Provider extends ContentProvider {
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     /**
      * Authority of Installations content provider
@@ -54,6 +51,7 @@ public class Keyboard_Provider extends ContentProvider {
         public static final String TIMESTAMP = "timestamp";
         public static final String DEVICE_ID = "device_id";
         public static final String PACKAGE_NAME = "package_name";
+        public static final String URL = "url";
         public static final String BEFORE_TEXT = "before_text";
         public static final String CURRENT_TEXT = "current_text";
         public static final String IS_PASSWORD = "is_password";
@@ -67,6 +65,7 @@ public class Keyboard_Provider extends ContentProvider {
                     + Keyboard_Data.TIMESTAMP + " real default 0,"
                     + Keyboard_Data.DEVICE_ID + " text default '',"
                     + Keyboard_Data.PACKAGE_NAME + " text default '',"
+                    + Keyboard_Data.URL + " text default '',"
                     + Keyboard_Data.BEFORE_TEXT + " text default '',"
                     + Keyboard_Data.CURRENT_TEXT + " text default '',"
                     + Keyboard_Data.IS_PASSWORD + " integer default -1" };
@@ -109,7 +108,7 @@ public class Keyboard_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
 
         return count;
     }
@@ -147,8 +146,7 @@ public class Keyboard_Provider extends ContentProvider {
                 if (keyboard_id > 0) {
                     Uri installationsUri = ContentUris.withAppendedId(
                             Keyboard_Data.CONTENT_URI, keyboard_id);
-                    getContext().getContentResolver().notifyChange(
-                            installationsUri, null);
+                    getContext().getContentResolver().notifyChange(installationsUri, null, false);
                     return installationsUri;
                 }
                 database.endTransaction();
@@ -186,6 +184,8 @@ public class Keyboard_Provider extends ContentProvider {
                 Keyboard_Data.DEVICE_ID);
         dataMap.put(Keyboard_Data.PACKAGE_NAME,
                 Keyboard_Data.PACKAGE_NAME);
+        dataMap.put(Keyboard_Data.URL,
+                Keyboard_Data.URL);
         dataMap.put(Keyboard_Data.BEFORE_TEXT,
                 Keyboard_Data.BEFORE_TEXT);
         dataMap.put(Keyboard_Data.CURRENT_TEXT,
@@ -206,6 +206,7 @@ public class Keyboard_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case KEYBOARD:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -250,7 +251,7 @@ public class Keyboard_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }

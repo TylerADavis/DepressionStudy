@@ -3,12 +3,7 @@ package com.aware;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.database.Cursor;
 import net.sqlcipher.database.SQLiteException;
 import android.net.Uri;
@@ -16,17 +11,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
+import androidx.core.app.NotificationCompat;
 import com.aware.providers.ESM_Provider;
 import com.aware.providers.ESM_Provider.ESM_Data;
 import com.aware.ui.ESM_Queue;
 import com.aware.ui.esms.ESMFactory;
 import com.aware.ui.esms.ESM_Question;
 import com.aware.utils.Aware_Sensor;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -164,12 +157,13 @@ public class ESM extends Aware_Sensor {
     /**
      * ESM Dialog with a date and time picker
      * Example: [{"esm":{"esm_type":7,"esm_title":"Date and time","esm_instructions":"When did this happen?","esm_submit":"OK","esm_trigger":"AWARE Test"}}]
+     * User answer is saved as yyyy-MM-dd HH:mm:ss Z
      */
     public static final int TYPE_ESM_DATETIME = 7;
 
     /**
      * ESM Dialog with PAM (Photographic Affect Meter)
-     * [{"esm":{"esm_type":8,"esm_title":"PAM","esm_instructions":"Select what best illustrates your mood","esm_submit":"OK","esm_trigger":"AWARE Test"}}]
+     * Example: [{"esm":{"esm_type":8,"esm_title":"PAM","esm_instructions":"Select what best illustrates your mood","esm_submit":"OK","esm_trigger":"AWARE Test"}}]
      */
     public static final int TYPE_ESM_PAM = 8;
 
@@ -178,6 +172,38 @@ public class ESM extends Aware_Sensor {
      * Example: [{'esm':{'esm_type':9,'esm_title':'ESM Number','esm_instructions':'User can answer with any numeric value','esm_submit':'Next','esm_expiration_threshold':20,'esm_trigger':'esm trigger example'}}]
      */
     public static final int TYPE_ESM_NUMBER = 9;
+
+    /**
+     * ESM that shows the user a webpage
+     * Example: [{"esm":{"esm_type":10,"esm_title":"ESM Web","esm_instructions":"Please fill out this online survey. Press OK when done.","esm_submit":"OK","esm_url":"https://www.google.com"}}]
+     */
+    public static final int TYPE_ESM_WEB = 10;
+    /**
+     * ESM that asks the user to pick a date
+     * User answer is saved as yyyy-MM-dd Z
+     */
+    public static final int TYPE_ESM_DATE = 11;
+    /**
+     * ESM that asks the user to choose a time
+     * User answer is saved as HH:mm:ss Z
+     */
+    public static final int TYPE_ESM_TIME = 12;
+    /**
+     * ESM that asks the user to choose a time with a clock
+     */
+    public static final int TYPE_ESM_CLOCK = 13;
+    /**
+     * ESM that asks the user to take a picture
+     */
+    public static final int TYPE_ESM_PICTURE = 14;
+    /**
+     * ESM that asks the user to make an audio recording
+     */
+    public static final int TYPE_ESM_AUDIO = 15;
+    /**
+     * ESM that asks the user to make a video recording
+     */
+    public static final int TYPE_ESM_VIDEO = 16;
 
     /**
      * Required String extra for displaying an ESM. It should contain the JSON string that defines the ESM dialog.
@@ -205,6 +231,8 @@ public class ESM extends Aware_Sensor {
     //Static instance to the notification manager
     private static NotificationManager mNotificationManager;
 
+    private static final ESMMonitor esmMonitor = new ESMMonitor();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -214,20 +242,30 @@ public class ESM extends Aware_Sensor {
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Aware.DEBUG) Log.d(TAG, "ESM service created!");
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_AWARE_TRY_ESM);
+        filter.addAction(ACTION_AWARE_QUEUE_ESM);
+        filter.addAction(ACTION_AWARE_ESM_ANSWERED);
+        filter.addAction(ACTION_AWARE_ESM_DISMISSED);
+        filter.addAction(ACTION_AWARE_ESM_EXPIRED);
+        filter.addAction(ACTION_AWARE_ESM_REPLACED);
+
+        registerReceiver(esmMonitor, filter);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (Aware.isStudy(this) && Aware.isSyncEnabled(this, ESM_Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    ESM_Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                ESM_Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
+
+        unregisterReceiver(esmMonitor);
 
         if (Aware.DEBUG) Log.d(TAG, "ESM service terminated...");
     }
@@ -249,15 +287,15 @@ public class ESM extends Aware_Sensor {
             if (DEBUG)
                 Log.d(TAG, "ESM service active... Queue = " + ESM_Queue.getQueueSize(getApplicationContext()));
 
-            if (!Aware.isSyncEnabled(this, ESM_Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), 1);
                 ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        ESM_Provider.getAuthority(this),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency / 3)
+                        .setSyncAdapter(Aware.getAWAREAccount(this), ESM_Provider.getAuthority(this))
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
         }
 
@@ -298,8 +336,10 @@ public class ESM extends Aware_Sensor {
 
     /**
      * Queue an ESM
-     *  @param context
-     * @param queue*/
+     *
+     * @param context
+     * @param queue
+     */
     public static void queueESM(Context context, String queue) {
         queueESM(context, queue, false);
     }
@@ -402,7 +442,7 @@ public class ESM extends Aware_Sensor {
      */
     public static void notifyESM(Context context, boolean notifyOnce) {
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL);
         mBuilder.setSmallIcon(R.drawable.ic_stat_aware_esm);
         mBuilder.setContentTitle(context.getResources().getText(R.string.aware_esm_questions_title));
         mBuilder.setContentText(context.getResources().getText(R.string.aware_esm_questions));
@@ -411,9 +451,10 @@ public class ESM extends Aware_Sensor {
         mBuilder.setUsesChronometer(true);
         mBuilder.setOnlyAlertOnce(notifyOnce);
         mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
+        mBuilder = Aware.setNotificationProperties(mBuilder, Aware.AWARE_NOTIFICATION_IMPORTANCE_GENERAL);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_ID);
+            mBuilder.setChannelId(Aware.AWARE_NOTIFICATION_CHANNEL_GENERAL);
 
         Intent intent_ESM = new Intent(context, ESM_Queue.class);
         intent_ESM.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -504,8 +545,10 @@ public class ESM extends Aware_Sensor {
             //only the client or standalone apps handle ESM statuses
             if (context.getPackageName().equalsIgnoreCase("com.aware.phone") || context.getApplicationContext().getResources().getBoolean(R.bool.standalone)) {
 
-                if (context.getPackageName().equalsIgnoreCase("com.aware.phone")) Log.d(ESM.TAG, "AWARE client will handle ESM");
-                if (context.getResources().getBoolean(R.bool.standalone)) Log.d(ESM.TAG, context.getPackageName() + " will handle ESM");
+                if (context.getPackageName().equalsIgnoreCase("com.aware.phone"))
+                    Log.d(ESM.TAG, "AWARE client will handle ESM");
+                if (context.getResources().getBoolean(R.bool.standalone))
+                    Log.d(ESM.TAG, context.getPackageName() + " will handle ESM");
 
                 if (intent.getAction().equals(ESM.ACTION_AWARE_TRY_ESM)) {
                     queueESM(context, intent.getStringExtra(ESM.EXTRA_ESM), true);

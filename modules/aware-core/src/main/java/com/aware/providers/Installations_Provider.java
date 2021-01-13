@@ -11,16 +11,12 @@ import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.aware.Aware;
-import com.aware.BuildConfig;
-import com.aware.Installations;
 import com.aware.utils.DatabaseHelper;
 
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -121,7 +117,7 @@ public class Installations_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 
@@ -159,8 +155,7 @@ public class Installations_Provider extends ContentProvider {
                 if (installations_id > 0) {
                     Uri installationsUri = ContentUris.withAppendedId(
                             Installations_Data.CONTENT_URI, installations_id);
-                    getContext().getContentResolver().notifyChange(
-                            installationsUri, null);
+                    getContext().getContentResolver().notifyChange(installationsUri, null, false);
                     return installationsUri;
                 }
                 database.endTransaction();
@@ -213,6 +208,7 @@ public class Installations_Provider extends ContentProvider {
         initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //qb.setStrict(true);
         switch (sUriMatcher.match(uri)) {
             case INSTALLATIONS:
                 qb.setTables(DATABASE_TABLES[0]);
@@ -258,7 +254,7 @@ public class Installations_Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }
