@@ -2,6 +2,7 @@ package edu.ucla.cs.er.depressionstudy;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.app.ActionBar;
@@ -98,6 +99,13 @@ public class LogoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
         // Check the first time launching the app
         isUserFirstTime = Boolean.valueOf(Utils.readSharedSetting(LogoActivity.this, PREF_USER_FIRST_TIME, "true"));
         Log.d(TAG,"first time? " + isUserFirstTime);
@@ -114,6 +122,20 @@ public class LogoActivity extends AppCompatActivity {
             startActivity(introIntent);
             finish();
         } else {
+            Intent intent = getIntent();
+            if (intent != null && intent.getExtras() != null) {
+                Bundle extras = intent.getExtras();
+                String action = extras.getString("action", "");
+                String url = extras.getString("url", "");
+                if (action.equals("openUrl") && !url.equals("")) {
+                    intent.removeExtra("action");
+                    intent.removeExtra("url");
+                    Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(urlIntent);
+                    finish();
+                    return;
+                }
+            }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -123,7 +145,6 @@ public class LogoActivity extends AppCompatActivity {
                 }
             }, SPLASH_TIME_OUT);
         }
-
     }
 
     @Override

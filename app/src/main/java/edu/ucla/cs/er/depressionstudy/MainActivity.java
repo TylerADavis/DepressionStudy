@@ -1,15 +1,13 @@
 package edu.ucla.cs.er.depressionstudy;
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,11 +18,9 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.PermissionChecker;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -33,8 +29,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.Toast;
 
 import com.aware.Aware;
 import com.aware.Applications;
@@ -46,17 +40,11 @@ import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
-
-import static android.app.Notification.DEFAULT_ALL;
 
 //New for aware
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
 import com.microsoft.appcenter.distribute.Distribute;
 
 public class MainActivity extends AppCompatActivity {
@@ -151,9 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     case 1:
                         if (findViewById(R.id.fragment_container) != null) {
-                            if (survey == null) {
-                                survey = new SurveyFragment();
-                            }
+                            survey = new SurveyFragment();
 
                             survey.setArguments(getIntent().getExtras());
                             transaction.replace(R.id.fragment_container, survey);
@@ -185,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
 //        initialFragment();
         //initializeAware();
 //        scheduleNotifications();
+    }
+
+    public void openTab(int index) {
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.selectTab(tabLayout.getTabAt(index));
     }
 
     @Override
@@ -401,6 +392,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void subscribeToNotifications() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "eWellness";
+            String description = "eWellness notifications";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("eWellness-high", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // Subscribe to notification channel with device id
         String device_id = Aware.getSetting(this, Aware_Preferences.DEVICE_ID);
         FirebaseMessaging.getInstance().subscribeToTopic(device_id)
             .addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -31,6 +31,8 @@ import com.aware.Aware;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
@@ -62,21 +64,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+            Map<String,String> data = remoteMessage.getData();
+            if (data.getOrDefault("action", "").equals("openUrl") && !data.getOrDefault("url", "").equals("")) {
+                sendNotification(remoteMessage.getNotification().getTitle(),
+                        remoteMessage.getNotification().getBody(),
+                        data.getOrDefault("url", ""));
+                return;
+            }
         }
 
-        // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 
             sendNotification(remoteMessage.getNotification().getTitle(),
-                    remoteMessage.getNotification().getBody());
+                    remoteMessage.getNotification().getBody(),
+                    "");
+            return;
         }
 
-        Intent aware = new Intent(this, Aware.class);
-        startService(aware);
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+        //Intent aware = new Intent(this, Aware.class);
+        //startService(aware);
     }
     // [END receive_message]
 
@@ -118,11 +125,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String title, String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+    private void sendNotification(String title, String messageBody, String url) {
+        PendingIntent pendingIntent;
+        if (!url.equals("")) {
+            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+        }
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

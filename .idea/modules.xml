@@ -4,11 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DepressionStudy.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DepressionStudy.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/aware-core/DepressionStudy.aware-core.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/aware-core/DepressionStudy.aware-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aware.plugin.ambient_noise.lib/DepressionStudy.com.aware.plugin.ambient_noise.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aware.plugin.ambient_noise.lib/DepressionStudy.com.aware.plugin.ambient_noise.lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aware.plugin.device_usage.lib/DepressionStudy.com.aware.plugin.device_usage.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aware.plugin.device_usage.lib/DepressionStudy.com.aware.plugin.device_usage.lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aware.plugin.google.activity_recognition.lib/DepressionStudy.com.aware.plugin.google.activity_recognition.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aware.plugin.google.activity_recognition.lib/DepressionStudy.com.aware.plugin.google.activity_recognition.lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aware.plugin.google.fused_location.lib/DepressionStudy.com.aware.plugin.google.fused_location.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aware.plugin.google.fused_location.lib/DepressionStudy.com.aware.plugin.google.fused_location.lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aware.plugin.studentlife.audio.lib/DepressionStudy.com.aware.plugin.studentlife.audio.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aware.plugin.studentlife.audio.lib/DepressionStudy.com.aware.plugin.studentlife.audio.lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/projects.DepressionStudy.iml" filepath="$PROJECT_DIR$/.idea/modules/projects.DepressionStudy.iml" />
     </modules>
   </component>
