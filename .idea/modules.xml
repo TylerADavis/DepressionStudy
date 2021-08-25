@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DepressionStudy.iml" filepath="$PROJECT_DIR$/.idea/modules/DepressionStudy.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DepressionStudy.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DepressionStudy.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/aware-core/DepressionStudy.aware-core.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/aware-core/DepressionStudy.aware-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/projects.DepressionStudy.iml" filepath="$PROJECT_DIR$/.idea/modules/projects.DepressionStudy.iml" />
     </modules>
   </component>
 </project>
