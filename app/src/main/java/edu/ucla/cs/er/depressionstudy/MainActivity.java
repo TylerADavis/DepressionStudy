@@ -14,17 +14,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.PermissionChecker;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +43,7 @@ import com.aware.ui.PermissionsHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import edu.ucla.cs.er.depressionstudy.Util.Utils;
 
 //New for aware
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             REQUIRED_PERMISSIONS.add(Manifest.permission.FOREGROUND_SERVICE);
         }
 
@@ -91,9 +95,9 @@ public class MainActivity extends AppCompatActivity {
                 /*Analytics.class, Crashes.class, */Distribute.class);
 
         if (BuildConfig.FLAVOR.equals("dev")) {
-            STUDY_URL = "https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric";
+            STUDY_URL = "https://vetthrive.us:8080/index.php/1/4lph4num3ric";
         } else {
-            STUDY_URL = "https://gsnap.erlabdemo.com/index.php/1/4lph4num3ric";
+            STUDY_URL = "https://vetthrive.us:8080/index.php/1/4lph4num3ric";
         }
 
         setContentView(R.layout.activity_main);
@@ -147,30 +151,17 @@ public class MainActivity extends AppCompatActivity {
                             transaction.commit();
                         }
                         return;
-                    /*case 1:
-                        if (findViewById(R.id.fragment_container) != null) {
-                            if (calendar == null) {
-                                calendar = new CalendarFragment();
-                            }
-
-                            calendar.setArguments(getIntent().getExtras());
-                            transaction.replace(R.id.fragment_container, calendar);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-                        return;*/
                 }
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-//        initialFragment();
-        //initializeAware();
-//        scheduleNotifications();
     }
 
     public void openTab(int index) {
@@ -204,8 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Closing eWellness")
                         .setMessage("Are you sure you want to close this app? It will stop the data collection.")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Aware.stopAWARE(getApplicationContext());
@@ -381,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     public void checkFirstTime() {
         // Check the first time launching the app
         isUserFirstTime = Boolean.valueOf(Utils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
-        Log.d("LogoActivity","first time? " + isUserFirstTime);
+        Log.d("LogoActivity", "first time? " + isUserFirstTime);
         Intent introIntent = new Intent(MainActivity.this, OnboardingActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
 
@@ -407,15 +397,15 @@ public class MainActivity extends AppCompatActivity {
         // Subscribe to notification channel with device id
         String device_id = Aware.getSetting(this, Aware_Preferences.DEVICE_ID);
         FirebaseMessaging.getInstance().subscribeToTopic(device_id)
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    String msg = "Subscribed to notifications " + device_id;
-                    if (!task.isSuccessful()) {
-                        msg = "Failed to subscribe to notifications " + device_id;
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed to notifications " + device_id;
+                        if (!task.isSuccessful()) {
+                            msg = "Failed to subscribe to notifications " + device_id;
+                        }
+                        Log.d(TAG, msg);
                     }
-                    Log.d(TAG, msg);
-                }
-            });
+                });
     }
 }
