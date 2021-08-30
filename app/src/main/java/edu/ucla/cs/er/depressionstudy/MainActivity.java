@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
 
@@ -52,6 +54,7 @@ import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.distribute.Distribute;
 
 public class MainActivity extends AppCompatActivity {
+    private WebView mWebView;
     private static final String TAG = "MainActivity";
     private static String STUDY_URL;
     private ArrayList<String> REQUIRED_PERMISSIONS = new ArrayList<>(Arrays.asList(
@@ -75,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
     private String mActivityTitle;
     private AboutFragment about;
     private ContactFragment contact;
-    private SurveyFragment survey;
-    private StatusFragment status;
     private CalendarFragment calendar;
 
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
@@ -102,71 +103,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        //checkFirstTime();
+        mWebView = findViewById(R.id.activity_main_webview);
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        mWebView.setWebViewClient(new MyWebViewClient());
 
-        mActivityTitle = getTitle().toString();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.container);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mActivityTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-
-        if (findViewById(R.id.fragment_container) != null) {
-            status = new StatusFragment();
-            status.setArguments(getIntent().getExtras());
-            transaction_sec.replace(R.id.fragment_container, status);
-            transaction_sec.addToBackStack(null);
-            transaction_sec.commit();
-        }
-
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                switch (tab.getPosition()) {
-                    case 0:
-                        if (findViewById(R.id.fragment_container) != null) {
-                            status = new StatusFragment();
-                            status.setArguments(getIntent().getExtras());
-                            transaction.replace(R.id.fragment_container, status);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-                        return;
-                    case 1:
-                        if (findViewById(R.id.fragment_container) != null) {
-                            survey = new SurveyFragment();
-
-                            survey.setArguments(getIntent().getExtras());
-                            transaction.replace(R.id.fragment_container, survey);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-                        return;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-    }
-
-    public void openTab(int index) {
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.selectTab(tabLayout.getTabAt(index));
+        // REMOTE RESOURCE
+        mWebView.loadUrl("https://paramshah10.github.io/VA-dashboard/");
     }
 
     @Override
@@ -182,81 +126,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        switch (id) {
-            case R.id.terminate:
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Closing eWellness")
-                        .setMessage("Are you sure you want to close this app? It will stop the data collection.")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Aware.stopAWARE(getApplicationContext());
-                                finish();
-                            }
-
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-                return true;
-            case R.id.info:
-                if (findViewById(R.id.fragment_container) != null) {
-                    about = new AboutFragment();
-                    about.setArguments(getIntent().getExtras());
-                    transaction.replace(R.id.fragment_container, about);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-                return true;
-            case R.id.survey:
-                if (findViewById(R.id.fragment_container) != null) {
-                    survey = new SurveyFragment();
-                    survey.setArguments(getIntent().getExtras());
-                    transaction.replace(R.id.fragment_container, survey);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-                return true;
-
-            case R.id.help:
-                if (findViewById(R.id.fragment_container) != null) {
-                    contact = new ContactFragment();
-                    contact.setArguments(getIntent().getExtras());
-                    transaction.replace(R.id.fragment_container, contact);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-                return true;
-            case R.id.status:
-                if (findViewById(R.id.fragment_container) != null) {
-                    status = new StatusFragment();
-                    status.setArguments(getIntent().getExtras());
-                    transaction.replace(R.id.fragment_container, status);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-                return true;
-            case R.id.calendar:
-                if (findViewById(R.id.fragment_container) != null) {
-                    calendar = new CalendarFragment();
-                    calendar.setArguments(getIntent().getExtras());
-                    transaction.replace(R.id.fragment_container, calendar);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-                return true;
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed() {
